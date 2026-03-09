@@ -6,8 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		465B677F2F372CEC00EA9BFA /* ElliptiqueModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67622F372CEC00EA9BFA /* ElliptiqueModal.swift */; };
+		465B67802F372CEC00EA9BFA /* HeartRateModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67642F372CEC00EA9BFA /* HeartRateModal.swift */; };
+		465B67812F372CEC00EA9BFA /* HometrainerModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67652F372CEC00EA9BFA /* HometrainerModal.swift */; };
+		465B67832F372CEC00EA9BFA /* MarcheModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67672F372CEC00EA9BFA /* MarcheModal.swift */; };
+		465B67842F372CEC00EA9BFA /* MerModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67682F372CEC00EA9BFA /* MerModal.swift */; };
+		465B67852F372CEC00EA9BFA /* PiscineModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67692F372CEC00EA9BFA /* PiscineModal.swift */; };
+		465B67862F372CEC00EA9BFA /* PisteModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B676A2F372CEC00EA9BFA /* PisteModal.swift */; };
+		465B67872F372CEC00EA9BFA /* RameurModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B676B2F372CEC00EA9BFA /* RameurModal.swift */; };
+		465B67882F372CEC00EA9BFA /* RouteModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B676C2F372CEC00EA9BFA /* RouteModal.swift */; };
+		465B678C2F372CEC00EA9BFA /* TapisModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67712F372CEC00EA9BFA /* TapisModal.swift */; };
+		465B67922F372CEC00EA9BFA /* TriathlonModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67772F372CEC00EA9BFA /* TriathlonModal.swift */; };
+		465B67932F372CEC00EA9BFA /* UserProfileModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67782F372CEC00EA9BFA /* UserProfileModal.swift */; };
+		465B67942F372CEC00EA9BFA /* VttModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B67792F372CEC00EA9BFA /* VttModal.swift */; };
+		4666F6112F406D5E006482CC /* TousModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4666F6102F406D45006482CC /* TousModal.swift */; };
+		4697413C2F49AE83004002BA /* Addtrainingmodal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4697413B2F49AE78004002BA /* Addtrainingmodal.swift */; };
+		46B312E42F351B9500F42737 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 46B312E32F351B9500F42737 /* SDWebImageSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		465B67622F372CEC00EA9BFA /* ElliptiqueModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElliptiqueModal.swift; sourceTree = "<group>"; };
+		465B67642F372CEC00EA9BFA /* HeartRateModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateModal.swift; sourceTree = "<group>"; };
+		465B67652F372CEC00EA9BFA /* HometrainerModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HometrainerModal.swift; sourceTree = "<group>"; };
+		465B67672F372CEC00EA9BFA /* MarcheModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarcheModal.swift; sourceTree = "<group>"; };
+		465B67682F372CEC00EA9BFA /* MerModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MerModal.swift; sourceTree = "<group>"; };
+		465B67692F372CEC00EA9BFA /* PiscineModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiscineModal.swift; sourceTree = "<group>"; };
+		465B676A2F372CEC00EA9BFA /* PisteModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PisteModal.swift; sourceTree = "<group>"; };
+		465B676B2F372CEC00EA9BFA /* RameurModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RameurModal.swift; sourceTree = "<group>"; };
+		465B676C2F372CEC00EA9BFA /* RouteModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteModal.swift; sourceTree = "<group>"; };
+		465B67712F372CEC00EA9BFA /* TapisModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapisModal.swift; sourceTree = "<group>"; };
+		465B67772F372CEC00EA9BFA /* TriathlonModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriathlonModal.swift; sourceTree = "<group>"; };
+		465B67782F372CEC00EA9BFA /* UserProfileModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileModal.swift; sourceTree = "<group>"; };
+		465B67792F372CEC00EA9BFA /* VttModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VttModal.swift; sourceTree = "<group>"; };
+		4666F6102F406D45006482CC /* TousModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TousModal.swift; sourceTree = "<group>"; };
 		4667CCD02ED2468B00F05F12 /* Suivi Sportif.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Suivi Sportif.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4697413B2F49AE78004002BA /* Addtrainingmodal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addtrainingmodal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,15 +57,71 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46B312E42F351B9500F42737 /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		465B67AB2F37379D00EA9BFA /* Modals */ = {
+			isa = PBXGroup;
+			children = (
+				465B67AF2F37690100EA9BFA /* Health */,
+				465B67AE2F3768BA00EA9BFA /* Profile */,
+				465B67AD2F37647300EA9BFA /* Training */,
+				465B67AC2F37386100EA9BFA /* Sports */,
+			);
+			path = Modals;
+			sourceTree = "<group>";
+		};
+		465B67AC2F37386100EA9BFA /* Sports */ = {
+			isa = PBXGroup;
+			children = (
+				465B67622F372CEC00EA9BFA /* ElliptiqueModal.swift */,
+				465B67672F372CEC00EA9BFA /* MarcheModal.swift */,
+				4666F6102F406D45006482CC /* TousModal.swift */,
+				465B676A2F372CEC00EA9BFA /* PisteModal.swift */,
+				465B676B2F372CEC00EA9BFA /* RameurModal.swift */,
+				465B67712F372CEC00EA9BFA /* TapisModal.swift */,
+				465B67792F372CEC00EA9BFA /* VttModal.swift */,
+				465B676C2F372CEC00EA9BFA /* RouteModal.swift */,
+				465B67692F372CEC00EA9BFA /* PiscineModal.swift */,
+				465B67682F372CEC00EA9BFA /* MerModal.swift */,
+				465B67652F372CEC00EA9BFA /* HometrainerModal.swift */,
+				465B67772F372CEC00EA9BFA /* TriathlonModal.swift */,
+			);
+			path = Sports;
+			sourceTree = "<group>";
+		};
+		465B67AD2F37647300EA9BFA /* Training */ = {
+			isa = PBXGroup;
+			children = (
+				4697413B2F49AE78004002BA /* Addtrainingmodal.swift */,
+			);
+			path = Training;
+			sourceTree = "<group>";
+		};
+		465B67AE2F3768BA00EA9BFA /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				465B67782F372CEC00EA9BFA /* UserProfileModal.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		465B67AF2F37690100EA9BFA /* Health */ = {
+			isa = PBXGroup;
+			children = (
+				465B67642F372CEC00EA9BFA /* HeartRateModal.swift */,
+			);
+			path = Health;
+			sourceTree = "<group>";
+		};
 		4667CCC72ED2468B00F05F12 = {
 			isa = PBXGroup;
 			children = (
+				465B67AB2F37379D00EA9BFA /* Modals */,
 				4667CCD22ED2468B00F05F12 /* Suivi Sportif */,
 				4667CCD12ED2468B00F05F12 /* Products */,
 			);
@@ -65,6 +155,7 @@
 			);
 			name = "Suivi Sportif";
 			packageProductDependencies = (
+				46B312E32F351B9500F42737 /* SDWebImageSwiftUI */,
 			);
 			productName = "Suivi Sportif";
 			productReference = 4667CCD02ED2468B00F05F12 /* Suivi Sportif.app */;
@@ -94,6 +185,9 @@
 			);
 			mainGroup = 4667CCC72ED2468B00F05F12;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				46B312E22F351B9500F42737 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4667CCD12ED2468B00F05F12 /* Products */;
 			projectDirPath = "";
@@ -119,6 +213,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				465B677F2F372CEC00EA9BFA /* ElliptiqueModal.swift in Sources */,
+				4666F6112F406D5E006482CC /* TousModal.swift in Sources */,
+				465B67802F372CEC00EA9BFA /* HeartRateModal.swift in Sources */,
+				465B67812F372CEC00EA9BFA /* HometrainerModal.swift in Sources */,
+				465B67832F372CEC00EA9BFA /* MarcheModal.swift in Sources */,
+				4697413C2F49AE83004002BA /* Addtrainingmodal.swift in Sources */,
+				465B67842F372CEC00EA9BFA /* MerModal.swift in Sources */,
+				465B67852F372CEC00EA9BFA /* PiscineModal.swift in Sources */,
+				465B67862F372CEC00EA9BFA /* PisteModal.swift in Sources */,
+				465B67872F372CEC00EA9BFA /* RameurModal.swift in Sources */,
+				465B67882F372CEC00EA9BFA /* RouteModal.swift in Sources */,
+				465B678C2F372CEC00EA9BFA /* TapisModal.swift in Sources */,
+				465B67922F372CEC00EA9BFA /* TriathlonModal.swift in Sources */,
+				465B67932F372CEC00EA9BFA /* UserProfileModal.swift in Sources */,
+				465B67942F372CEC00EA9BFA /* VttModal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +434,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		46B312E22F351B9500F42737 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		46B312E32F351B9500F42737 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 46B312E22F351B9500F42737 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4667CCC82ED2468B00F05F12 /* Project object */;
 }

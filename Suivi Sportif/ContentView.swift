@@ -22,6 +22,7 @@ struct ContentView: View {
         @State private var showQuitAlert = false
         @State private var showAddModal = false
         @State private var showProfileModal = false
+        @State private var showNoticeModal = false
         @State private var showTousModal = false
         @State private var showMarcheModal = false
         @State private var showTapisModal = false
@@ -332,6 +333,7 @@ struct ContentView: View {
     private var previousYearSameMonthValues: [String] { activityTypes.map { previousYearSameMonthKm($0) } }
     private var currentYearSameMonthValues: [String] { activityTypes.map { currentYearSameMonthKm($0) } }
     private var symbolsRowValues: [String] { activityTypes.map { comparisonSymbol($0) } }
+
     // MARK: - Body et Vue Principale
         
         var body: some View {
@@ -373,7 +375,7 @@ struct ContentView: View {
                     if showVTTModal { VTTModal(isPresented: $showVTTModal) }
                     if showPiscineModal { PiscineModal(isPresented: $showPiscineModal) }
                     if showMerModal { MerModal(isPresented: $showMerModal) }
-
+                    if showNoticeModal { NoticeModal(isPresented: $showNoticeModal) }
             }
             .alert("Êtes-vous sûr de vouloir quitter l'application ?", isPresented: $showQuitAlert) {
                 Button("Annuler", role: .cancel) { }
@@ -399,7 +401,7 @@ struct ContentView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 300)
-                    .opacity(0.46)
+                    .opacity(0.66)
                     .scaleEffect(zoom ? 1.3 : 1.1)
                     .animation(.easeInOut(duration: 6).repeatForever(autoreverses: true), value: zoom)
                     .onAppear { zoom = true }
@@ -556,6 +558,7 @@ struct ContentView: View {
                 }
             }
         }
+
     // MARK: - Sous-vues
         
         private var scrollingTextView: some View {
@@ -857,7 +860,7 @@ struct ContentView: View {
         // MARK: - Menu latéral
         
         private var sideMenu: some View {
-            VStack(spacing: 20) {
+            VStack(spacing: 16) {
                 Button(action: { currentDestination = .home }) {
                     menuButton(
                         title: "Menu",
@@ -909,12 +912,17 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
                 
-                Spacer()
-                
+                Button(action: { showNoticeModal = true }) {
+                    menuButton(title: "Notice", icon: "book.fill", bg: Color.indigo.opacity(0.30))
+                }
+                .buttonStyle(.plain)
+
                 Button(action: { showQuitAlert = true }) {
                     menuButton(title: "Quitter", icon: "xmark.circle.fill", bg: Color.red.opacity(0.25))
                 }
                 .buttonStyle(.plain)
+
+                Spacer()
             }
             .padding(.top, 20)
             .padding(.bottom, 20)
@@ -939,4 +947,3 @@ struct ContentView: View {
     #Preview {
         ContentView()
     }
-

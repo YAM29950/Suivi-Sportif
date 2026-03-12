@@ -872,7 +872,7 @@ struct StatisticsView: View {
         case "Tous": return "Tous3"
         case "Marche": return "Marche"
         case "Tapis": return "Tapis"
-        case "Elliptique": return "elliptique"
+        case "Elliptique": return "veloelliptique"
         case "Rameur": return "Rameur"
         case "Home trainer": return "Home trainer"
         case "Triathlon": return "Triathlon"

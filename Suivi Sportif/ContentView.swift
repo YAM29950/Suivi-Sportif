@@ -681,44 +681,53 @@ struct ContentView: View {
 
                     HStack(alignment: .bottom, spacing: 0) {
                         ForEach(0..<12, id: \.self) { index in
+                            
+                            let imageWidth: CGFloat = {
+                                switch imageZones[index].imageName {
+                                case "Rameur": return imageZones[index].width + 20  // ← changer ici
+                                case "Home trainer": return imageZones[index].width + 10
+                                default: return imageZones[index].width
+                                }
+                            }()
+                            let imageHeight: CGFloat = {
+                                switch imageZones[index].imageName {
+                                case "Rameur": return imageZones[index].height + 20  // ← et ici
+                                case "Home trainer": return imageZones[index].height + 6
+                                default: return imageZones[index].height
+                                }
+                            }()
+                            
                             VStack(spacing: 4) {
                                 Button(action: {
-                                        switch imageZones[index].imageName {
-                                        case "Tous":
-                                            showTousModal = true
-                                        case "Marche":
-                                            showMarcheModal = true
-                                        case "Tapis":
-                                            showTapisModal = true
-                                        case "elliptique":
-                                            showElliptiqueModal = true
-                                        case "Rameur":
-                                            showRameurModal = true
-                                        case "Home trainer":
-                                            showHomeTrainerModal = true
-                                        case "triathlon":
-                                            showTriathlonModal = true
-                                        case "Piste":
-                                            showPisteModal = true
-                                        case "Route":
-                                            showRouteModal = true
-                                        case "VTT":
-                                            showVTTModal = true
-                                        case "Piscine":
-                                            showPiscineModal = true
-                                        case "Mer":
-                                            showMerModal = true
-                                        default:
-                                            break
-                                        }
-                                    }) {
+                                    switch imageZones[index].imageName {
+                                    case "Tous": showTousModal = true
+                                    case "Marche": showMarcheModal = true
+                                    case "Tapis": showTapisModal = true
+                                    case "elliptique": showElliptiqueModal = true
+                                    case "Rameur": showRameurModal = true
+                                    case "Home trainer": showHomeTrainerModal = true
+                                    case "triathlon": showTriathlonModal = true
+                                    case "Piste": showPisteModal = true
+                                    case "Route": showRouteModal = true
+                                    case "VTT": showVTTModal = true
+                                    case "Piscine": showPiscineModal = true
+                                    case "Mer": showMerModal = true
+                                    default: break
+                                    }
+                                }) {
+                                    Group {
                                         if NSImage(named: imageZones[index].imageName) != nil {
-                                            Image(imageZones[index].imageName)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: imageZones[index].width, height: imageZones[index].height)
-                                                .background(Color.white)
-                                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color.white)
+                                                    .frame(width: imageZones[index].width, height: imageZones[index].height)
+                                                Image(imageZones[index].imageName)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: imageWidth, height: imageHeight)
+                                            }
+                                            .frame(width: imageZones[index].width, height: imageZones[index].height)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
                                         } else {
                                             VStack(spacing: 4) {
                                                 Image(systemName: "photo.badge.plus")
@@ -731,7 +740,8 @@ struct ContentView: View {
                                             .frame(width: imageZones[index].width, height: imageZones[index].height)
                                         }
                                     }
-                                    .buttonStyle(.plain)
+                                }
+                                .buttonStyle(.plain)
 
                                 Text(imageZones[index].name)
                                     .font(.system(size: 9, weight: .medium))

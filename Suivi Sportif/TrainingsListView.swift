@@ -78,9 +78,7 @@ struct TrainingsListView: View {
             .onChange(of: sortAscending) { _ in sortTrainings() }
             .alert("Voulez-vous vraiment supprimer le dernier entrainement ?", isPresented: $showDeleteAlert) {
                 Button("Annuler", role: .cancel) {}
-                Button("Supprimer", role: .destructive) {
-                    deleteLastTraining()
-                }
+                Button("Supprimer", role: .destructive) { deleteLastTraining() }
             } message: {
                 Text("Cette action peut être annulée avec le bouton Restaurer.")
             }
@@ -124,10 +122,8 @@ struct TrainingsListView: View {
             HStack(spacing: 12) {
                 Button(action: { showDeleteAlert = true }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "trash.fill")
-                            .font(.system(size: 14))
-                        Text("Supprimer le dernier")
-                            .font(.system(size: 13, weight: .medium))
+                        Image(systemName: "trash.fill").font(.system(size: 14))
+                        Text("Supprimer le dernier").font(.system(size: 13, weight: .medium))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
@@ -141,10 +137,8 @@ struct TrainingsListView: View {
                 
                 Button(action: { restoreLastTraining() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "arrow.uturn.backward.circle.fill")
-                            .font(.system(size: 14))
-                        Text("Restaurer le dernier")
-                            .font(.system(size: 13, weight: .medium))
+                        Image(systemName: "arrow.uturn.backward.circle.fill").font(.system(size: 14))
+                        Text("Restaurer le dernier").font(.system(size: 13, weight: .medium))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
@@ -158,10 +152,8 @@ struct TrainingsListView: View {
                 
                 Button(action: { reloadFromCSV() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "arrow.clockwise.circle.fill")
-                            .font(.system(size: 14))
-                        Text("Recharger CSV")
-                            .font(.system(size: 13, weight: .medium))
+                        Image(systemName: "arrow.clockwise.circle.fill").font(.system(size: 14))
+                        Text("Recharger CSV").font(.system(size: 13, weight: .medium))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
@@ -182,15 +174,11 @@ struct TrainingsListView: View {
             .padding(.top, 6)
             
             HStack(spacing: 8) {
-                Text("Du:")
-                    .foregroundColor(.white)
-                    .font(.system(size: 18, weight: .semibold))
-                MonthYearPicker(selection: $startDate, isEndDate: false)  // Début du mois
+                Text("Du:").foregroundColor(.white).font(.system(size: 18, weight: .semibold))
+                MonthYearPicker(selection: $startDate, isEndDate: false)
                 Spacer().frame(width: 20)
-                Text("Au:")
-                    .foregroundColor(.white)
-                    .font(.system(size: 18, weight: .semibold))
-                MonthYearPicker(selection: $endDate, isEndDate: true)  // FIN du mois
+                Text("Au:").foregroundColor(.white).font(.system(size: 18, weight: .semibold))
+                MonthYearPicker(selection: $endDate, isEndDate: true)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
@@ -240,7 +228,7 @@ struct TrainingsListView: View {
     }
     
     private func trainingRow(_ training: Training, index: Int) -> some View {
-        return HStack(spacing: 0) {
+        HStack(spacing: 0) {
             Spacer().frame(width: 10)
             TableCell(text: training.formattedDate, width: columnWidths[0], alignment: .leading)
             VerticalDivider()
@@ -284,10 +272,7 @@ struct TrainingsListView: View {
     private func normalizeSpeed(_ speed: String?) -> String {
         guard let speed = speed else { return "" }
         let trimmed = speed.trimmingCharacters(in: .whitespaces)
-        if trimmed.contains(".00") {
-            return trimmed.replacingOccurrences(of: ".00", with: "")
-        }
-        return trimmed
+        return trimmed.contains(".00") ? trimmed.replacingOccurrences(of: ".00", with: "") : trimmed
     }
     
     private func formatted(_ value: Double?) -> String {
@@ -364,18 +349,18 @@ struct TrainingsListView: View {
     }
 }
 
-// MonthYearPicker - Composant pour sélectionner mois et année
+// MARK: - MonthYearPicker
 struct MonthYearPicker: View {
     @Binding var selection: Date
     @State private var selectedMonth: Int
     @State private var selectedYear: Int
-    let isEndDate: Bool  // NOUVEAU paramètre
+    let isEndDate: Bool
     
     private let months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
                           "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
     private let years = Array(2016...2040)
     
-    init(selection: Binding<Date>, isEndDate: Bool = false) {  // MODIFIÉ
+    init(selection: Binding<Date>, isEndDate: Bool = false) {
         self._selection = selection
         self.isEndDate = isEndDate
         let calendar = Calendar.current
@@ -388,9 +373,7 @@ struct MonthYearPicker: View {
         HStack(spacing: 8) {
             Picker("", selection: $selectedMonth) {
                 ForEach(1...12, id: \.self) { month in
-                    Text(months[month - 1])
-                        .font(.system(size: 16))
-                        .tag(month)
+                    Text(months[month - 1]).font(.system(size: 16)).tag(month)
                 }
             }
             .pickerStyle(.menu)
@@ -399,9 +382,7 @@ struct MonthYearPicker: View {
             
             Picker("", selection: $selectedYear) {
                 ForEach(years, id: \.self) { year in
-                    Text("\(year)")
-                        .font(.system(size: 16))
-                        .tag(year)
+                    Text("\(year)").font(.system(size: 16)).tag(year)
                 }
             }
             .pickerStyle(.menu)
@@ -414,13 +395,10 @@ struct MonthYearPicker: View {
         var components = DateComponents()
         components.year = selectedYear
         components.month = selectedMonth
-        
         if isEndDate {
-            // Pour la date de fin, aller à la fin du mois
             components.day = 1
             if let firstOfMonth = Calendar.current.date(from: components),
                let lastOfMonth = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: firstOfMonth) {
-                // Mettre l'heure à 23:59:59
                 var endComponents = Calendar.current.dateComponents([.year, .month, .day], from: lastOfMonth)
                 endComponents.hour = 23
                 endComponents.minute = 59
@@ -430,7 +408,6 @@ struct MonthYearPicker: View {
                 }
             }
         } else {
-            // Pour la date de début, premier jour du mois à 00:00:00
             components.day = 1
             if let newDate = Calendar.current.date(from: components) {
                 selection = newDate
@@ -439,7 +416,7 @@ struct MonthYearPicker: View {
     }
 }
 
-// AnimatedGifView
+// MARK: - AnimatedGifView
 struct AnimatedGifView: View {
     var body: some View {
         if let gifURL = Bundle.main.url(forResource: "tous", withExtension: "gif") {
@@ -449,7 +426,6 @@ struct AnimatedGifView: View {
                 .frame(width: 110, height: 180)
                 .cornerRadius(8)
         } else {
-            // Utiliser l'image statique Tous3 depuis Assets
             Image("Tous3")
                 .resizable()
                 .scaledToFit()
@@ -459,6 +435,7 @@ struct AnimatedGifView: View {
     }
 }
 
+// MARK: - StatBox
 struct StatBox: View {
     let icon: String
     let label: String
@@ -478,12 +455,8 @@ struct StatBox: View {
             Image(systemName: icon)
                 .font(.system(size: 28, weight: .semibold))
                 .foregroundColor(iconColor)
-            Text(label)
-                .font(.system(size: 12))
-                .foregroundColor(.white.opacity(0.85))
-            Text(value)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundColor(.white)
+            Text(label).font(.system(size: 12)).foregroundColor(.white.opacity(0.85))
+            Text(value).font(.system(size: 18, weight: .bold)).foregroundColor(.white)
         }
         .padding(10)
         .frame(width: 120, height: 100)
@@ -492,17 +465,35 @@ struct StatBox: View {
     }
 }
 
+// MARK: - SportImageBox
 struct SportImageBox: View {
     let selectedSport: String
+    
+    private var isGifSport: Bool {
+        ["Piscine", "Mer", "Rameur", "Home trainer", "Tapis", "Marche",
+         "Piste", "VTT", "Route", "Triathlon"].contains(selectedSport)
+    }
+    
+    private var boxWidth: CGFloat {
+        if isGifSport || selectedSport == "Elliptique" { return 160 }
+        if selectedSport == "Tous" || selectedSport == "Triathlon" { return 120 }
+        return 80
+    }
+    
+    private var boxHeight: CGFloat {
+        if selectedSport == "Piscine" || selectedSport == "Mer" { return 150 }
+        if isGifSport || selectedSport == "Elliptique" { return 120 }
+        if selectedSport == "Tous" { return 120 }
+        return 80
+    }
     
     var sportImageName: String {
         switch selectedSport {
         case "Tous": return "Tous3"
         case "Marche": return "Marche"
         case "Tapis": return "tapis2"
-        case "Elliptique": return "elliptique"
+        case "Elliptique": return "veloelliptique"
         case "Home trainer": return "Home trainer"
-        case "triathlon": return "Triathlon"
         case "Piste": return "Piste"
         case "Route": return "velo2"
         case "VTT": return "cycle"
@@ -513,152 +504,75 @@ struct SportImageBox: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
-            // MARK: - Piscine → GIF Piscine
             if selectedSport == "Piscine" {
-                if let gifURL = Bundle.main.url(forResource: "Piscine", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 130)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "Piscine", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 130).cornerRadius(6)
                 }
-                
-            // MARK: - Mer → GIF mer1
             } else if selectedSport == "Mer" {
-                if let gifURL = Bundle.main.url(forResource: "mer1", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 130)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "mer1", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 130).cornerRadius(6)
                 }
-                
-            // MARK: - Rameur → GIF rameur3
             } else if selectedSport == "Rameur" {
-                if let gifURL = Bundle.main.url(forResource: "rameur", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "rameur", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - Home trainer → GIF home
             } else if selectedSport == "Home trainer" {
-                if let gifURL = Bundle.main.url(forResource: "home", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "home", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - Tapis → GIF tapis2
             } else if selectedSport == "Tapis" {
-                if let gifURL = Bundle.main.url(forResource: "tapis2", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "tapis2", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - Marche → GIF marcheur
             } else if selectedSport == "Marche" {
-                if let gifURL = Bundle.main.url(forResource: "marcheur", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "marcheur", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - Piste → GIF piste
             } else if selectedSport == "Piste" {
-                if let gifURL = Bundle.main.url(forResource: "piste", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "piste", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - VTT → GIF vtt2
             } else if selectedSport == "VTT" {
-                if let gifURL = Bundle.main.url(forResource: "vtt", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "vtt", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - Route → GIF cycle
             } else if selectedSport == "Route" {
-                if let gifURL = Bundle.main.url(forResource: "cycle", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "cycle", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - triathlon → GIF triathlon2
             } else if selectedSport == "Triathlon" {
-                if let gifURL = Bundle.main.url(forResource: "triathlon3", withExtension: "gif") {
-                    AnimatedImage(url: gifURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                        .cornerRadius(6)
+                if let url = Bundle.main.url(forResource: "triathlon3", withExtension: "gif") {
+                    AnimatedImage(url: url).resizable().scaledToFit().frame(height: 110).cornerRadius(6)
                 }
-                
-            // MARK: - Images statiques
+            } else if selectedSport == "Elliptique" {
+                // MARK: - Elliptique → image statique veloelliptique
+                Image("veloelliptique")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 110)  // ← modifie cette valeur selon tes besoins
+                    .cornerRadius(6)
             } else {
                 Image(sportImageName)
                     .resizable()
                     .scaledToFit()
-                    .frame(
-                        height: (selectedSport == "Tous" || selectedSport == "Triathlon") ? 150 : 80
-                    )
+                    .frame(height: selectedSport == "Tous" ? 150 : 80)
                     .cornerRadius(6)
             }
         }
         .padding(.trailing, 10)
-        .padding(
-            .vertical,
-            (selectedSport == "Piscine" || selectedSport == "Mer" || selectedSport == "Rameur" || selectedSport == "Home trainer" || selectedSport == "Tapis" || selectedSport == "Marche" || selectedSport == "Piste" || selectedSport == "VTT" || selectedSport == "Route" || selectedSport == "triathlon") ? 5 : 10
-        )
-        .frame(
-            width: {
-                if selectedSport == "Piscine" || selectedSport == "Mer" || selectedSport == "Rameur" || selectedSport == "Home trainer" || selectedSport == "Tapis" || selectedSport == "Marche" || selectedSport == "Piste" || selectedSport == "VTT" || selectedSport == "Route" || selectedSport == "triathlon" {
-                    return 160
-                } else if selectedSport == "Tous" || selectedSport == "Triathlon" {
-                    return 120
-                } else {
-                    return 80
-                }
-            }(),
-            height: {
-                if selectedSport == "Piscine" || selectedSport == "Mer" {
-                    return 150
-                } else if selectedSport == "Tous" || selectedSport == "Triathlon" || selectedSport == "Rameur" || selectedSport == "Home trainer" || selectedSport == "Tapis" || selectedSport == "Marche" || selectedSport == "Piste" || selectedSport == "VTT" || selectedSport == "Route" || selectedSport == "triathlon" {
-                    return 120
-                } else {
-                    return 80
-                }
-            }()
-        )
+        .padding(.vertical, isGifSport || selectedSport == "Elliptique" ? 5 : 10)
+        .frame(width: boxWidth, height: boxHeight)
     }
 }
 
+// MARK: - VerticalDivider
 struct VerticalDivider: View {
     var body: some View {
         Rectangle().fill(Color.white.opacity(0.25)).frame(width: 1)
     }
 }
 
+// MARK: - TableHeader
 struct TableHeader: View {
     let title: String
     let width: CGFloat
@@ -671,6 +585,7 @@ struct TableHeader: View {
     }
 }
 
+// MARK: - SortableHeader
 struct SortableHeader: View {
     let title: String
     let width: CGFloat
@@ -696,6 +611,7 @@ struct SortableHeader: View {
     }
 }
 
+// MARK: - TableCell
 struct TableCell: View {
     let text: String
     let width: CGFloat
@@ -712,4 +628,3 @@ struct TableCell: View {
 #Preview {
     TrainingsListView()
 }
-

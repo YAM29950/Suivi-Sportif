@@ -780,17 +780,25 @@ struct NoticeModal: View {
     private var planPageView: some View {
         VStack(alignment: .leading, spacing: 12) {
             introBox(
-                "TrainingPlanView vous aide a structurer votre preparation sur 8 semaines grace a un calendrier hebdomadaire personnalisable.",
+                "TrainingPlanView est un programme d'entrainement complet sur 8 semaines, pre-programme et renouvelable. Chaque semaine contient 3 seances (Mardi, Jeudi, Samedi) avec blocs detailles, zones FC calculees par la methode Karvonen et conseils nutritionnels.",
                 color: .cyan
             )
-            blockView(heading: "Calendrier 8 semaines", color: .cyan,
-                      body: "Un planning visuel affiche les 8 semaines avec, pour chaque jour, la seance prevue (type, distance cible, intensite). Naviguez d'une semaine a l'autre facilement.")
-            blockView(heading: "Personnalisation", color: .cyan,
-                      body: "Cliquez sur n'importe quel jour pour ajouter, modifier ou supprimer une seance planifiee. Definissez le type d'effort : endurance, fractionne, recuperation.")
-            blockView(heading: "Suivi de l'adherence", color: .cyan,
-                      body: "Les seances realisees sont automatiquement rapprochees du plan. Un indicateur visuel montre votre niveau de respect du programme.")
-            blockView(heading: "Conseils", color: .cyan,
-                      body: "Des recommandations hebdomadaires s'affichent en bas de chaque semaine pour vous guider sur la charge de travail et la recuperation.")
+            blockView(heading: "Selecteur de semaines", color: .cyan,
+                      body: "Une rangee de 8 boutons permet de naviguer entre les semaines. Chaque bouton affiche le type de semaine (A, B, C ou D) et un badge vert comptant les seances deja validees. La semaine active est mise en evidence en orange.")
+            blockView(heading: "4 types de semaines — cycle repetable", color: .cyan,
+                      body: "Semaine A (S1, S3) : Force + Endurance Z2 + Tapis 12%. Semaine B (S2, S4) : HIIT Lipolytique + Tempo controle. Semaine C (S5, S7) : Cardio Z2 long + Circuit Core + Fartlek. Semaine D (S6, S8) : HIIT Pyramidal + Cardio Croise + Circuit Cardio-Force. Les semaines 4 et 8 sont des semaines de deload (volume reduit).")
+            blockView(heading: "Cartes de seance depliables", color: .cyan,
+                      body: "Chaque seance (Mardi / Jeudi / Samedi) est une carte cliquable. En la depliant, vous accedeez aux blocs detailles : nom du bloc, description, zone FC cible calculee dynamiquement, liste des exercices avec repetitions et durees. Un bouton permet de marquer la seance comme completee.")
+            blockView(heading: "Zones FC calculees (Methode Karvonen)", color: .cyan,
+                      body: "Toutes les plages FC (Z1 a Z5) sont calculees en temps reel depuis votre FCmax et votre FC de repos. La formule : Zone = ((FCmax - FCrepos) x %) + FCrepos. Ces valeurs s'affichent directement dans chaque bloc de seance.")
+            blockView(heading: "Widget FC — reglage FCmax et FCrepos", color: .cyan,
+                      body: "En bas de l'ecran, un widget rouge affiche FCmax, FCrepos et la Reserve cardiaque (HRR). Cliquer dessus ouvre un popup pour modifier ces valeurs (+/-) et visualiser instantanement les 5 zones recalculees.")
+            blockView(heading: "GIFs exercices interactifs", color: .cyan,
+                      body: "Certains exercices (Dead Bug, Pont Fessier, Mountain Climbers, Burpees, Kettlebell Swing, Squat Jump, Fentes) sont des boutons cliquables qui deployent un GIF anime illustrant le mouvement. Cliquer a nouveau masque le GIF.")
+            blockView(heading: "Validation et Calendrier de suivi", color: .cyan,
+                      body: "Chaque seance peut etre validee via un bouton coche. Une fenetre permet de saisir la date et l'heure exacte de realisation. Le calendrier (icone en haut) affiche la progression semaine par semaine avec compteur de seances, boutons Supprimer / Restaurer et serie actuelle.")
+            blockView(heading: "Nutrition et Indicateurs de suivi", color: .cyan,
+                      body: "Deux cartes permanentes completent chaque semaine : Nutrition Hebdomadaire (deficit calorique, proteines, collation pre-effort, hydratation) et Indicateurs de Suivi (FC repos le matin, tour de taille, poids, qualite du sommeil).")
         }
     }
 
@@ -799,17 +807,19 @@ struct NoticeModal: View {
     private var heartPageView: some View {
         VStack(alignment: .leading, spacing: 12) {
             introBox(
-                "HeartRateModal centralise toutes les donnees cardiaques et calcule vos zones d'entrainement personnalisees.",
+                "HeartRateModal est une fenetre flottante deplagable (drag & drop) avec 3 onglets : Fc %, Fc Age et Calculer. Elle permet de calculer votre FC cible, de la deduire de votre age, et de visualiser vos 5 zones d'entrainement personnalisees.",
                 color: .red
             )
-            blockView(heading: "FC max et FC repos", color: .red,
-                      body: "Renseignez votre frequence cardiaque maximale et de repos dans votre profil. Ces valeurs servent de base a tous les calculs de zones.")
-            blockView(heading: "5 zones d'entrainement", color: .red,
-                      body: "Les zones sont calculees selon la methode Karvonen. Zone 1 : recuperation. Zone 2 : endurance. Zone 3 : tempo. Zone 4 : seuil. Zone 5 : VO2 max.")
-            blockView(heading: "Historique cardiaque", color: .red,
-                      body: "Un graphique retrace l'evolution de votre FC moyenne par seance au fil du temps. Detectez les tendances et les progres de votre systeme cardiovasculaire.")
-            blockView(heading: "Alertes", color: .red,
-                      body: "Des indicateurs signalent les seances ou votre FC a depasse des seuils inhabituels, vous permettant de mieux doser votre recuperation.")
+            blockView(heading: "Onglet 1 — Fc %  (methode Karvonen manuelle)", color: .red,
+                      body: "Affiche votre FCmax (issue du Profil) et votre FC de repos. Selectionnez un pourcentage d'effort (50, 60, 70, 80, 90 ou 100 %) dans le menu. Le calcul s'effectue immediatement : FC = (% × (FCmax - FCrepos)) + FCrepos. Le resultat s'affiche dans un encadre jaune en bas a droite, sur fond d'une image de reference FC.")
+            blockView(heading: "Onglet 2 — Fc Age  (calcul par l'age)", color: .red,
+                      body: "Saisissez votre age dans le champ prevu. L'application calcule automatiquement votre FCmax estimee (220 - age). Selectionnez un pourcentage pour obtenir deux resultats simultanes : FC sans FCR (methode simple : % × FCmax) et FC avec FCR (methode Karvonen : integre la FC de repos du Profil). Un GIF de cycliste apparait des qu'un pourcentage est selectionne.")
+            blockView(heading: "Onglet 3 — Calculer (5 zones d'entrainement)", color: .red,
+                      body: "Saisissez FCmax et FC repos dans les champs. La FC Reserve (FCmax - FCrepos) est calculee automatiquement. Les 5 zones s'affichent avec les plages min/max en bpm : Z1 Echauffement (50-60%), Z2 Endurance fondamentale (60-70%), Z3 Resistance douce Aerobie (70-80%), Z4 Resistance dure Seuil (80-90%), Z5 VMA Maximum (90-100%). Un GIF anime de cardio apparait des que les deux valeurs sont renseignees.")
+            blockView(heading: "Deplacement de la fenetre", color: .red,
+                      body: "La barre d'en-tete (avec l'icone de lignes horizontales) est une zone de drag & drop. Maintenez le clic et glissez pour repositionner le modal librement sur l'ecran.")
+            blockView(heading: "Donnees partagees avec le Profil", color: .red,
+                      body: "FCmax (calculee depuis votre date de naissance : 220 - age) et FC de repos sont lues directement depuis les AppStorage du Profil Utilisateur. Modifier ces valeurs dans le Profil les met a jour automatiquement dans HeartRateModal.")
         }
     }
 
@@ -818,17 +828,21 @@ struct NoticeModal: View {
     private var profilePageView: some View {
         VStack(alignment: .leading, spacing: 12) {
             introBox(
-                "UserProfileModal regroupe toutes vos informations personnelles utilisees pour personnaliser les calculs et les recommandations de l'application.",
+                "UserProfileModal est une fenetre scrollable en deux colonnes : colonne gauche pour la photo de profil, colonne droite pour les donnees personnelles. Toutes les valeurs sont persistantes via AppStorage et partagees avec HeartRateModal et TrainingPlanView.",
                 color: .orange
             )
-            blockView(heading: "Donnees personnelles", color: .orange,
-                      body: "Renseignez votre nom, prenom, date de naissance, poids et taille. Ces informations permettent de calculer votre IMC et d'adapter les zones d'effort.")
-            blockView(heading: "Parametres cardiaques", color: .orange,
-                      body: "FC max, FC de repos et FC cible sont configurables ici. Ils alimentent directement les calculs de HeartRateModal.")
-            blockView(heading: "Objectifs", color: .orange,
-                      body: "Definissez vos objectifs kilometriques annuels par activite. L'application affichera votre progression par rapport a ces cibles dans les Statistiques.")
-            blockView(heading: "Photo de profil", color: .orange,
-                      body: "Importez une photo depuis votre bibliotheque pour personnaliser votre profil. Elle s'affiche en haut du modal Profil.")
+            blockView(heading: "Colonne gauche — Bandeau date et age", color: .orange,
+                      body: "Un bandeau anime defile en continu avec la date du jour en francais (ex : Mercredi 12 Mars 2026). En dessous, un encadre bleu affiche l'age calcule automatiquement a partir de la date de naissance saisie dans la colonne droite.")
+            blockView(heading: "Colonne gauche — Photo de profil", color: .orange,
+                      body: "Un bouton 'Choisir une photo' ouvre le selecteur de fichiers macOS (formats PNG, JPEG, HEIC). La photo s'affiche dans un rectangle personnalisable. Un bouton 'Reglages photo' (violet) deployable expose 5 sliders : largeur image, hauteur image, contraste, largeur du rectangle et hauteur du rectangle. Un bouton 'Supprimer' efface la photo. Tous les reglages sont sauvegardes automatiquement.")
+            blockView(heading: "Colonne droite — Identite", color: .orange,
+                      body: "Deux champs de saisie : Nom et Prenom. Les valeurs sont stockees en AppStorage et persistantes entre les sessions.")
+            blockView(heading: "Colonne droite — Date de naissance", color: .orange,
+                      body: "Trois menus deroulants independants : Jour (1-31), Mois (nom en francais), Annee (1960 a aujourd'hui). La combinaison des trois calcule automatiquement l'age affiche dans la colonne gauche, et la FCmax utilisee dans les zones cardiaques (220 - age).")
+            blockView(heading: "Colonne droite — Mesures physiques", color: .orange,
+                      body: "Deux champs : Poids (kg) et Taille (cm). Ces donnees sont sauvegardees en AppStorage.")
+            blockView(heading: "Colonne droite — Frequences cardiaques", color: .orange,
+                      body: "FCmax est calculee et affichee automatiquement (220 - age) en jaune, en lecture seule. FC de repos est un champ libre modifiable. Cette valeur de FC repos est partagee directement avec HeartRateModal (onglets Fc % et Fc Age) et avec TrainingPlanView (widget FC et calcul des zones Karvonen).")
         }
     }
 }

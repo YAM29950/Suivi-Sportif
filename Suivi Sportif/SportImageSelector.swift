@@ -3,13 +3,15 @@ import SwiftUI
 struct SportImageSelector: View {
     @Binding var selectedSport: String
     
-    private let imageSize: CGFloat = 70
+    private let imageSize: CGFloat = 80       // largeur
+    private let imageSizeHeight: CGFloat = 90  // ← hauteur (augmenter cette valeur)
     private let spacing: CGFloat = 8
     private let columns: Int = 12
-    private let rectangleWidth: CGFloat = 980
+    private let rectangleWidth: CGFloat = 1100
+    
     
     private let sportImages: [(imageName: String, sportName: String)] = [
-        ("Tous3", "Tous"),
+        ("Menu", "Tous"),
         ("Marche", "Marche"),
         ("Tapis", "Tapis"),
         ("elliptique", "Elliptique"),
@@ -42,23 +44,52 @@ struct SportImageSelector: View {
     }
     
     private func sportImageButton(imageName: String, sportName: String) -> some View {
-        Button(action: {
+        
+        let imageWidth: CGFloat = {
+            switch imageName {
+            case "Rameur": return imageSize + 20
+            case "Home trainer": return imageSize + 10
+            case "elliptique": return imageSize + 10
+            case "VTT": return imageSize + 10
+            case "Piste": return imageSize + 10
+            default: return imageSize
+            }
+        }()
+        let imageHeight: CGFloat = {
+            switch imageName {
+            case "Rameur": return imageSize + 20
+            case "Home trainer": return imageSize + 6
+            case "elliptique": return imageSize + 6
+            case "VTT": return imageSize + 6
+            case "Piste": return imageSize + 6
+            default: return imageSize
+            }
+        }()
+        
+        return Button(action: {
             selectedSport = sportName
         }) {
             ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.white)
+                    .frame(width: imageSize, height: imageSizeHeight)  // ← ici
+                
                 Image(imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: imageSize, height: imageSize)
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                
-                if selectedSport == sportName {
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(Color.green, lineWidth: 3)
-                        .frame(width: imageSize + 4, height: imageSize + 4)
-                }
+                    .frame(width: imageWidth, height: imageHeight)
             }
+            .frame(width: imageSize, height: imageSizeHeight)  // ← et ici
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                Group {
+                    if selectedSport == sportName {
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color.green, lineWidth: 3)
+                            .frame(width: imageSize + 4, height: imageSize + 4)
+                    }
+                }
+            )
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(selectedSport == sportName ? Color.green.opacity(0.2) : Color.clear)

@@ -489,7 +489,7 @@ struct SportImageBox: View {
     
     var sportImageName: String {
         switch selectedSport {
-        case "Tous": return "Tous3"
+        case "Tous": return "Menu"
         case "Marche": return "Marche"
         case "Tapis": return "tapis2"
         case "Elliptique": return "veloelliptique"

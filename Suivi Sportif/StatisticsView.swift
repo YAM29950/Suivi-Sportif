@@ -533,7 +533,7 @@ struct StatisticsView: View {
                         .scaledToFit()
                         .frame(width: 80, height: 60)
                 } else {
-                    Image("Tous3")
+                    Image("Menu")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 60)

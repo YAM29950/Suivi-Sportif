@@ -684,15 +684,21 @@ struct ContentView: View {
                             
                             let imageWidth: CGFloat = {
                                 switch imageZones[index].imageName {
-                                case "Rameur": return imageZones[index].width + 20  // ← changer ici
+                                case "Rameur": return imageZones[index].width + 20
                                 case "Home trainer": return imageZones[index].width + 10
+                                case "elliptique": return imageZones[index].width + 10
+                                case "VTT": return imageZones[index].width + 10
+                                case "Piste": return imageZones[index].width + 10
                                 default: return imageZones[index].width
                                 }
                             }()
                             let imageHeight: CGFloat = {
                                 switch imageZones[index].imageName {
-                                case "Rameur": return imageZones[index].height + 20  // ← et ici
+                                case "Rameur": return imageZones[index].height + 22
                                 case "Home trainer": return imageZones[index].height + 6
+                                case "elliptique": return imageZones[index].height + 6
+                                case "VTT": return imageZones[index].height + 2
+                                case "Piste": return imageZones[index].height + 2
                                 default: return imageZones[index].height
                                 }
                             }()

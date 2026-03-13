@@ -700,7 +700,7 @@ struct ContentView: View {
                                 case "elliptique": return imageZones[index].height + 6
                                 case "VTT": return imageZones[index].height + 2
                                 case "Piste": return imageZones[index].height + 2
-                                case "Piscine": return imageZones[index].height + 8
+                                case "Piscine": return imageZones[index].height + 18
                                 case "Mer": return imageZones[index].height + 18
                                 default: return imageZones[index].height
                                 }

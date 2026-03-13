@@ -689,7 +689,8 @@ struct ContentView: View {
                                 case "elliptique": return imageZones[index].width + 10
                                 case "VTT": return imageZones[index].width + 10
                                 case "Piste": return imageZones[index].width + 10
-                                default: return imageZones[index].width
+                                case "Piscine": return imageZones[index].width + 1
+                                case "Mer": return imageZones[index].width + 1                                default: return imageZones[index].width
                                 }
                             }()
                             let imageHeight: CGFloat = {
@@ -699,6 +700,8 @@ struct ContentView: View {
                                 case "elliptique": return imageZones[index].height + 6
                                 case "VTT": return imageZones[index].height + 2
                                 case "Piste": return imageZones[index].height + 2
+                                case "Piscine": return imageZones[index].height + 8
+                                case "Mer": return imageZones[index].height + 18
                                 default: return imageZones[index].height
                                 }
                             }()

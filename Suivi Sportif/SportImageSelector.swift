@@ -47,7 +47,7 @@ struct SportImageSelector: View {
         
         let imageWidth: CGFloat = {
             switch imageName {
-            case "Rameur": return imageSize + 20
+            case "Rameur": return imageSize + 2
             case "Home trainer": return imageSize + 10
             case "elliptique": return imageSize + 10
             case "VTT": return imageSize + 10
@@ -57,7 +57,7 @@ struct SportImageSelector: View {
         }()
         let imageHeight: CGFloat = {
             switch imageName {
-            case "Rameur": return imageSize + 20
+            case "Rameur": return imageSize + 2
             case "Home trainer": return imageSize + 6
             case "elliptique": return imageSize + 6
             case "VTT": return imageSize + 6

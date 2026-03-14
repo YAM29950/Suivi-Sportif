@@ -104,6 +104,23 @@ struct ContentView: View {
         return formatter
     }()
     
+    // MARK: - Image de fond selon le jour
+    
+    private var backgroundImageName: String {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        // 1=dimanche, 2=lundi, 3=mardi, 4=mercredi, 5=jeudi, 6=vendredi, 7=samedi
+        switch weekday {
+        case 1: return "Menudimanche"
+        case 2: return "Menulundi"
+        case 3: return "Menumardi"
+        case 4: return "Menumercredi"
+        case 5: return "Menujeudi"
+        case 6: return "Menuvendredi"
+        case 7: return "Menusamedi"
+        default: return "Menu"
+        }
+    }
+    
     // MARK: - Fonctions génériques
     
     private func calculateKmForYear(_ year: Int) -> Double {
@@ -397,7 +414,7 @@ struct ContentView: View {
         
         private var homeView: some View {
             ZStack {
-                Image("Menu")
+                Image(backgroundImageName)
                     .resizable()
                     .scaledToFit()
                     .frame(height: 300)

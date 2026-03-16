@@ -702,23 +702,24 @@ struct ContentView: View {
                             let imageWidth: CGFloat = {
                                 switch imageZones[index].imageName {
                                 case "Rameur": return imageZones[index].width + 0
-                                case "Home trainer": return imageZones[index].width + 10
+                                case "Home trainer": return imageZones[index].width + 14
                                 case "elliptique": return imageZones[index].width + 10
                                 case "VTT": return imageZones[index].width + 10
                                 case "Piste": return imageZones[index].width + 10
                                 case "Piscine": return imageZones[index].width + 1
-                                case "Mer": return imageZones[index].width + 1                                default: return imageZones[index].width
+                                case "Mer": return imageZones[index].width + 4
+                                default: return imageZones[index].width
                                 }
                             }()
                             let imageHeight: CGFloat = {
                                 switch imageZones[index].imageName {
                                 case "Rameur": return imageZones[index].height + 0
-                                case "Home trainer": return imageZones[index].height + 6
+                                case "Home trainer": return imageZones[index].height + 10
                                 case "elliptique": return imageZones[index].height + 6
                                 case "VTT": return imageZones[index].height + 2
                                 case "Piste": return imageZones[index].height + 2
                                 case "Piscine": return imageZones[index].height + 18
-                                case "Mer": return imageZones[index].height + 18
+                                case "Mer": return imageZones[index].height + 28
                                 default: return imageZones[index].height
                                 }
                             }()

@@ -69,7 +69,7 @@
 			children = (
 				465B67AF2F37690100EA9BFA /* Health */,
 				465B67AE2F3768BA00EA9BFA /* Profile */,
-				465B67AD2F37647300EA9BFA /* Training */,
+				465B67AD2F37647300EA9BFA /* Ajout entrainement */,
 				465B67AC2F37386100EA9BFA /* Sports */,
 			);
 			path = Modals;
@@ -94,12 +94,12 @@
 			path = Sports;
 			sourceTree = "<group>";
 		};
-		465B67AD2F37647300EA9BFA /* Training */ = {
+		465B67AD2F37647300EA9BFA /* Ajout entrainement */ = {
 			isa = PBXGroup;
 			children = (
 				4697413B2F49AE78004002BA /* Addtrainingmodal.swift */,
 			);
-			path = Training;
+			path = "Ajout entrainement";
 			sourceTree = "<group>";
 		};
 		465B67AE2F3768BA00EA9BFA /* Profile */ = {

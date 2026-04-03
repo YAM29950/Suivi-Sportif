@@ -79,17 +79,17 @@
 			isa = PBXGroup;
 			children = (
 				465B67622F372CEC00EA9BFA /* ElliptiqueModal.swift */,
+				465B67652F372CEC00EA9BFA /* HometrainerModal.swift */,
 				465B67672F372CEC00EA9BFA /* MarcheModal.swift */,
-				4666F6102F406D45006482CC /* TousModal.swift */,
+				465B67682F372CEC00EA9BFA /* MerModal.swift */,
+				465B67692F372CEC00EA9BFA /* PiscineModal.swift */,
 				465B676A2F372CEC00EA9BFA /* PisteModal.swift */,
 				465B676B2F372CEC00EA9BFA /* RameurModal.swift */,
-				465B67712F372CEC00EA9BFA /* TapisModal.swift */,
-				465B67792F372CEC00EA9BFA /* VttModal.swift */,
 				465B676C2F372CEC00EA9BFA /* RouteModal.swift */,
-				465B67692F372CEC00EA9BFA /* PiscineModal.swift */,
-				465B67682F372CEC00EA9BFA /* MerModal.swift */,
-				465B67652F372CEC00EA9BFA /* HometrainerModal.swift */,
+				465B67712F372CEC00EA9BFA /* TapisModal.swift */,
+				4666F6102F406D45006482CC /* TousModal.swift */,
 				465B67772F372CEC00EA9BFA /* TriathlonModal.swift */,
+				465B67792F372CEC00EA9BFA /* VttModal.swift */,
 			);
 			path = Sports;
 			sourceTree = "<group>";

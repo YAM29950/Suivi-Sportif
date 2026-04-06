@@ -142,38 +142,73 @@ struct Training: Identifiable, Codable {
 
 class TrainingDataManager {
     static let shared = TrainingDataManager()
-    
+
+    private let migrationKey = "trainingsDidMigrateToJSON"
+
+    private var jsonFileURL: URL {
+        let realHome = String(cString: getpwuid(getuid())!.pointee.pw_dir)
+        return URL(fileURLWithPath: realHome)
+            .appendingPathComponent("Library/CloudStorage/Dropbox/trainings.json")
+    }
+
     private init() {}
-    
+
     // MARK: - Chargement des données
-    
+
     func loadTrainings() -> [Training] {
-        // Vérifier si des données existent déjà en UserDefaults
-        if let data = UserDefaults.standard.data(forKey: "trainings"),
+        // Étape 1 : Migration unique UserDefaults → fichier JSON Dropbox
+        if !UserDefaults.standard.bool(forKey: migrationKey),
+           let data = UserDefaults.standard.data(forKey: "trainings"),
            let decoded = try? JSONDecoder().decode([Training].self, from: data) {
-            print("✅ Chargement depuis UserDefaults: \(decoded.count) entrainements")
-            return decoded.sorted { $0.date > $1.date }
+            print("🔄 Migration UserDefaults → JSON file: \(decoded.count) entrainements")
+            let sorted = decoded.sorted { $0.date > $1.date }
+            saveTrainings(sorted)
+            UserDefaults.standard.removeObject(forKey: "trainings")
+            UserDefaults.standard.set(true, forKey: migrationKey)
+            return sorted
         }
-        
-        // Sinon, charger depuis le CSV
+
+        // Étape 2 : Charger depuis le fichier JSON
+        if FileManager.default.fileExists(atPath: jsonFileURL.path) {
+            do {
+                let data = try Data(contentsOf: jsonFileURL)
+                let decoded = try JSONDecoder().decode([Training].self, from: data)
+                print("✅ Chargement depuis JSON file: \(decoded.count) entrainements")
+                return decoded.sorted { $0.date > $1.date }
+            } catch {
+                print("❌ Erreur lecture JSON file: \(error)")
+            }
+        }
+
+        // Étape 3 : Fallback CSV (première installation)
         print("🔍 Chargement initial depuis CSV...")
         let trainings = loadFromCSV()
-        
-        // Sauvegarder dans UserDefaults pour la prochaine fois
         saveTrainings(trainings)
-        
+        UserDefaults.standard.set(true, forKey: migrationKey)
         return trainings
     }
-    
+
     // MARK: - Sauvegarde des données
-    
+
     func saveTrainings(_ trainings: [Training]) {
-        if let encoded = try? JSONEncoder().encode(trainings) {
-            UserDefaults.standard.set(encoded, forKey: "trainings")
-            print("✅ Données sauvegardées: \(trainings.count) entrainements")
-        } else {
-            print("❌ Erreur lors de l'encodage des entrainements")
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            let data = try encoder.encode(trainings)
+            try data.write(to: jsonFileURL, options: .atomic)
+            print("✅ Données sauvegardées dans JSON file: \(trainings.count) entrainements")
+        } catch {
+            print("❌ Erreur sauvegarde JSON file: \(error)")
         }
+    }
+
+    // MARK: - Ajout d'un entrainement
+
+    func addTraining(_ training: Training) {
+        var all = loadTrainings()
+        all.append(training)
+        saveTrainings(all)
+        NotificationCenter.default.post(name: .trainingsDidUpdate, object: nil)
     }
     
     // MARK: - Chargement depuis CSV
@@ -384,11 +419,5 @@ class TrainingDataManager {
         return trainings.sorted { $0.date > $1.date }
     }
     
-    // MARK: - Utilitaires
-    
-    func resetToCSV() {
-        UserDefaults.standard.removeObject(forKey: "trainings")
-        print("🔄 Cache effacé - les données seront rechargées depuis le CSV")
-    }
 }
 

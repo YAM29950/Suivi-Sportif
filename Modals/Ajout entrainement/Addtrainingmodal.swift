@@ -517,17 +517,8 @@ extension AddTrainingModal {
             plan: form.selectedPlan
         )
 
-        var all: [Training] = []
-        if let data = UserDefaults.standard.data(forKey: "trainings"),
-           let decoded = try? JSONDecoder().decode([Training].self, from: data) {
-            all = decoded
-        }
-        all.append(training)
-        if let encoded = try? JSONEncoder().encode(all) {
-            UserDefaults.standard.set(encoded, forKey: "trainings")
-            NotificationCenter.default.post(name: .trainingsDidUpdate, object: nil)
-            isPresented = false
-        }
+        TrainingDataManager.shared.addTraining(training)
+        isPresented = false
     }
 
     private var rameurProgrammeStr: String { form.rameurProgrammeStr }

@@ -150,18 +150,6 @@ struct TrainingsListView: View {
                 .disabled(lastDeletedTraining == nil)
                 .opacity(lastDeletedTraining == nil ? 0.5 : 1)
                 
-                Button(action: { reloadFromCSV() }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "arrow.clockwise.circle.fill").font(.system(size: 14))
-                        Text("Recharger CSV").font(.system(size: 13, weight: .medium))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.blue.opacity(0.35))
-                    .cornerRadius(8)
-                }
-                .buttonStyle(.plain)
                 
                 Spacer()
             }
@@ -342,11 +330,6 @@ struct TrainingsListView: View {
         TrainingDataManager.shared.saveTrainings(allTrainings)
     }
     
-    private func reloadFromCSV() {
-        TrainingDataManager.shared.resetToCSV()
-        loadTrainings()
-        NotificationCenter.default.post(name: .trainingsDidUpdate, object: nil)
-    }
 }
 
 // MARK: - MonthYearPicker

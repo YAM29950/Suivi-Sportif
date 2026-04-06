@@ -915,10 +915,7 @@ struct StatisticsView: View {
     }
     
     private func loadTrainings() {
-        if let data = UserDefaults.standard.data(forKey: "trainings"),
-           let decoded = try? JSONDecoder().decode([Training].self, from: data) {
-            allTrainings = decoded.sorted { $0.date > $1.date }
-        }
+        allTrainings = TrainingDataManager.shared.loadTrainings()
     }
     
     private func durationToMinutes(_ duration: String) -> Int {

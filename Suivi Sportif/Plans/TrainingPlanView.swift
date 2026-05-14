@@ -1155,7 +1155,7 @@ struct TrainingPlanView: View {
     private func semanaAWorkouts(week: Int) -> [WorkoutSession] {
         let tapisDuration = week == 3 ? "30 min" : "25 min"
         return [
-            WorkoutSession(id: "semA-\(week)-mardi", day: "MARDI", title: "FORCE + Endurance Z2", duration: "70 min",
+            WorkoutSession(id: "semA-\(week)-mardi", day: "MARDI", title: "FORCE + Endurance Z2", duration: "65 min",
                 blocks: [
                     WorkoutBlock(name: "Collation Pré-Effort", description: "30 min avant la séance", fcZone: nil,
                         details: ["20g de protéines (shake ou yaourt grec)", "Permet de préserver le muscle pendant l'effort"]),
@@ -1202,14 +1202,14 @@ struct TrainingPlanView: View {
                     WorkoutBlock(name: "Collation Pré-Effort", description: "30 min avant la séance", fcZone: nil,
                         details: ["20g de protéines", "Crucial pour tenir l'intensité du HIIT"]),
                     WorkoutBlock(name: "Échauffement Progressif", description: "Monter progressivement en intensité", fcZone: zoneZ1Z2,
-                        details: ["15 min home trainer", "Démarrer Z1, finir Z2 haute"]),
+                        details: ["20 min home trainer", "Démarrer Z1, finir Z2 haute"]),
                     WorkoutBlock(name: "HIIT Lipolytique", description: "Déclencheur hormonal - EPOC", fcZone: zoneFC(4),
                         details: ["\(hiitIntervals) sur home trainer", "30s en Z4 → \(zoneFC(4)) (haute résistance)", "90s en Z1 → récupération complète",
                                   week == 2 ? "⚡ +1 intervalle vs semaine 1" : "⏱️ Total intervalles : ~20 min"]),
                     WorkoutBlock(name: "Retour au calme", description: "Évacuer les lactates", fcZone: zoneFC(1),
-                        details: ["10 min home trainer Z1", "Récupération complète"])
+                        details: ["22 min home trainer Z1", "Récupération complète"])
                 ], nutritionTip: "CRUCIAL : 25-30g protéines + glucides dans les 30 min post-HIIT"),
-            WorkoutSession(id: "semB-\(week)-jeudi", day: "JEUDI", title: "TAPIS 12% + Endurance Z2", duration: week == 4 ? "45 min" : "75 min",
+            WorkoutSession(id: "semB-\(week)-jeudi", day: "JEUDI", title: "TAPIS 12% + Endurance Z2", duration: week == 4 ? "50 min" : "70 min",
                 blocks: [
                     WorkoutBlock(name: "Tapis Incliné 12%", description: "Graisse viscérale - séance clé", fcZone: zoneFC(2),
                         details: [week == 4 ? "15 min (déload)" : "20 min de marche inclinée", "Vitesse : 5 km/h",
@@ -1241,13 +1241,13 @@ struct TrainingPlanView: View {
     // =========================================================
 
     private func semanaCWorkouts(week: Int) -> [WorkoutSession] {
-        let enduranceDuration = week == 7 ? "60 min" : "40 min"
+        let enduranceDuration = week == 7 ? "60 min" : "50 min"
         let tapisDuration     = week == 7 ? "35 min" : "30 min"
         let coreSets          = week == 7 ? "4" : "3"
         return [
             WorkoutSession(id: "semC-\(week)-mardi", day: "MARDI",
                 title: week == 7 ? "Cardio Z2 Étendu + Core Intensifié" : "Endurance Z2 Longue + Circuit Core",
-                duration: week == 7 ? "85 min" : "75 min",
+                duration: week == 7 ? "100 min" : "85 min",
                 blocks: [
                     WorkoutBlock(name: "Collation Pré-Effort", description: "30 min avant — focus énergie durable", fcZone: nil,
                         details: ["20g protéines + 1 fruit (banane ou pomme)", "Privilégier les glucides lents pour une Z2 longue", "Éviter les graisses qui ralentissent l'assimilation"]),
@@ -1314,7 +1314,7 @@ struct TrainingPlanView: View {
         return [
             WorkoutSession(id: "semD-\(week)-mardi", day: "MARDI",
                 title: isDeload ? "DÉLOAD D — Cardio Doux Z2" : "HIIT Pyramidal Lipolytique",
-                duration: isDeload ? "35 min" : "65 min",
+                duration: isDeload ? "35 min" : "50 min",
                 blocks: isDeload ? [
                     WorkoutBlock(name: "DÉLOAD — Cardio Récupérateur", description: "Semaine 8 : zéro HIIT, récupération hormonale", fcZone: zoneFC(2),
                         details: ["35 min home trainer ou elliptique en Z2", "FC cible : \(karvonen(0.60))–\(karvonen(0.68)) bpm — rester dans le bas de Z2",

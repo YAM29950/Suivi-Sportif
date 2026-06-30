@@ -62,11 +62,17 @@ struct TriathlonConfig {
     var rameurTemps: Int?      = nil
     var homeTrainerKm: Int?    = nil
     var homeTrainerTemps: Int? = nil
+    var elliptiqueKm: Int?     = nil
+    var elliptiqueTemps: Int?  = nil
     var tapisKm: Int?          = nil
     var tapisTemps: Int?       = nil
 
-    var totalKm:    Int { (rameurKm ?? 0) + (homeTrainerKm ?? 0) + (tapisKm ?? 0) }
-    var totalTemps: Int { (rameurTemps ?? 0) + (homeTrainerTemps ?? 0) + (tapisTemps ?? 0) }
+    var totalKm: Int {
+        (rameurKm ?? 0) + (homeTrainerKm ?? 0) + (elliptiqueKm ?? 0) + (tapisKm ?? 0)
+    }
+    var totalTemps: Int {
+        (rameurTemps ?? 0) + (homeTrainerTemps ?? 0) + (elliptiqueTemps ?? 0) + (tapisTemps ?? 0)
+    }
 }
 
 enum AJeunState { case none, oui, non }
@@ -74,9 +80,9 @@ enum AJeunState { case none, oui, non }
 // MARK: - VIEWMODEL
 
 class TrainingFormViewModel: ObservableObject {
-    @Published var selectedDate   = Date()
+    @Published var selectedDate    = Date()
     @Published var selectedMinutes: Int? = nil
-    @Published var selectedForme: Int?  = nil
+    @Published var selectedForme: Int?   = nil
     @Published var kmText          = ""
     @Published var calorieText     = ""
     @Published var fcMaxText       = ""
@@ -96,7 +102,7 @@ class TrainingFormViewModel: ObservableObject {
     @Published var hasClickedCalendar   = false
     @Published var showCustomSettings   = false
     @Published var isInitialLoad        = true
-    @Published var customTextWidths: [CGFloat] = [80,24,80,22,32,48,32,32,36,40,40,200,150]
+    @Published var customTextWidths: [CGFloat] = [80, 24, 80, 22, 32, 48, 32, 32, 36, 40, 40, 200, 150]
 
     @Published var showHomeTrainer   = false
     @Published var showRameur        = false
@@ -131,7 +137,7 @@ class TrainingFormViewModel: ObservableObject {
         case ...600: return .semibold
         case ...700: return .bold
         case ...800: return .heavy
-        default: return .black
+        default:     return .black
         }
     }
 
@@ -144,7 +150,7 @@ class TrainingFormViewModel: ObservableObject {
         case ...600: return "Semibold"
         case ...700: return "Bold"
         case ...800: return "Heavy"
-        default: return "Black"
+        default:     return "Black"
         }
     }
 
@@ -190,7 +196,7 @@ class TrainingFormViewModel: ObservableObject {
     func formatMinutes(_ minutes: Int?) -> String {
         guard let m = minutes else { return "" }
         let h = m / 60; let mins = m % 60
-        return h > 0 ? "\(h):\(String(format:"%02d",mins))" : "0:\(String(format:"%02d",mins))"
+        return h > 0 ? "\(h):\(String(format: "%02d", mins))" : "0:\(String(format: "%02d", mins))"
     }
 
     func formatDate(_ date: Date) -> String {
@@ -220,8 +226,8 @@ class TrainingFormViewModel: ObservableObject {
     }
 
     func getZoneName(_ i: Int) -> String {
-        ["Date","À jeun","Forme","Km","Temps","Moyenne","Calories",
-         "FC Max","FC Moy","% FC Max","% FC Moy","Plan","Observations"][safe: i] ?? "Zone \(i+1)"
+        ["Date", "À jeun", "Forme", "Km", "Temps", "Moyenne", "Calories",
+         "FC Max", "FC Moy", "% FC Max", "% FC Moy", "Plan", "Observations"][safe: i] ?? "Zone \(i + 1)"
     }
 
     func updateCustomZone(_ i: Int) {
@@ -249,11 +255,11 @@ class TrainingFormViewModel: ObservableObject {
 
     var rameurTemp500Str: String {
         guard let t = rameur.temp500 else { return "" }
-        return "\(t/60):\(String(format:"%02d",t%60))"
+        return "\(t / 60):\(String(format: "%02d", t % 60))"
     }
     var rameurProgrammeStr: String {
         guard let p = rameur.programme else { return "" }
-        return [1:"PdP", 2:"Endurance", 3:"Interval"][p] ?? ""
+        return [1: "PdP", 2: "Endurance", 3: "Interval"][p] ?? ""
     }
 }
 
@@ -266,29 +272,29 @@ extension Array {
 // MARK: - CONSTANTES
 extension AddTrainingModal {
     static let puissanceOptions = [
-        ("60",60),("70",70),("80",80),("90",90),("100",100),
-        ("110",110),("120",120),("130",130),("140",140),("150",150),
-        ("160",160),("170",170),("180",180),("190",190),("200",200)
+        ("60", 60), ("70", 70), ("80", 80), ("90", 90), ("100", 100),
+        ("110", 110), ("120", 120), ("130", 130), ("140", 140), ("150", 150),
+        ("160", 160), ("170", 170), ("180", 180), ("190", 190), ("200", 200)
     ]
     static let cadenceOptions = [
-        ("50",50),("60",60),("70",70),("80",80),("90",90),
-        ("100",100),("110",110),("120",120),("130",130)
+        ("50", 50), ("60", 60), ("70", 70), ("80", 80), ("90", 90),
+        ("100", 100), ("110", 110), ("120", 120), ("130", 130)
     ]
-    static let niveauOptions  = [("1",1),("2",2),("3",3),("4",4),("5",5)]
-    static let penteOptions   = [("0%",0),("1%",1),("2%",2),("3%",3),("4%",4),("5%",5)]
-    static let plateauOptions = [("30",30),("42",42),("53",53)]
+    static let niveauOptions  = [("1", 1), ("2", 2), ("3", 3), ("4", 4), ("5", 5)]
+    static let penteOptions   = [("0%", 0), ("1%", 1), ("2%", 2), ("3%", 3), ("4%", 4), ("5%", 5)]
+    static let plateauOptions = [("30", 30), ("42", 42), ("53", 53)]
 
-    static let rameurWattsOptions = (5...20).map { ("\($0*10)",$0*10) }
-    static let rameurForceOptions = (1...9).map { ("\($0)",$0) }
-    static let rameurCMOptions    = (18...24).map { ("\($0)",$0) }
-    static let rameurTemp500Options = [("1:30",90),("1:45",105),("2:00",120)]
-    static let rameurProgrammeOptions = [("PdP",1),("Endurance",2),("Interval",3)]
+    static let rameurWattsOptions    = (5...20).map { ("\($0 * 10)", $0 * 10) }
+    static let rameurForceOptions    = (1...9).map { ("\($0)", $0) }
+    static let rameurCMOptions       = (18...24).map { ("\($0)", $0) }
+    static let rameurTemp500Options  = [("1:30", 90), ("1:45", 105), ("2:00", 120)]
+    static let rameurProgrammeOptions = [("PdP", 1), ("Endurance", 2), ("Interval", 3)]
 
-    static let elliptiqueForceOptions   = (1...10).map { ("\($0)",$0) }
-    static let elliptiqueInclineOptions = (0...10).map { ("\($0)",$0) }
+    static let elliptiqueForceOptions   = (1...10).map { ("\($0)", $0) }
+    static let elliptiqueInclineOptions = (0...10).map { ("\($0)", $0) }
 
-    static let tapisPenteOptions: [(String, Int?)] = [("",nil)] +
-        ([-3,-2,-1,1,2,3,4,5,6,7,8,9,10,11,12]).map { ("\($0)",$0) }
+    static let tapisPenteOptions: [(String, Int?)] = [("", nil)] +
+        ([-3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).map { ("\($0)", $0) }
 
     static let triathlonKmOptions: [(String, Int?)] = [
         ("", nil), ("1", 1), ("2", 2), ("3", 3), ("4", 4), ("5", 5),
@@ -297,17 +303,21 @@ extension AddTrainingModal {
         ("19", 19), ("20", 20), ("21", 21), ("22", 22), ("23", 23), ("24", 24), ("25", 25)
     ]
 
-    static let triathlonTempsOptions: [(String, Int?)] = [("", nil), ("0:10", 10),("0:15", 15), ("0:20", 20), ("0:30", 30),("0:40", 40),("0:50", 50),("0:60", 60)]
+    static let triathlonTempsOptions: [(String, Int?)] = [
+        ("", nil), ("0:10", 10), ("0:15", 15), ("0:20", 20), ("0:30", 30),
+        ("0:40", 40), ("0:50", 50), ("0:60", 60)
+    ]
+
     static let planOptions: [(String, String)] = [
-        ("",""),
-        ("S1 M","S1 M"),("S1 J","S1 J"),("S1 S","S1 S"),
-        ("S2 M","S2 M"),("S2 J","S2 J"),("S2 S","S2 S"),
-        ("S3 M","S3 M"),("S3 J","S3 J"),("S3 S","S3 S"),
-        ("S4 M","S4 M"),("S4 J","S4 J"),("S4 S","S4 S"),
-        ("S5 M","S5 M"),("S5 J","S5 J"),("S5 S","S5 S"),
-        ("S6 M","S6 M"),("S6 J","S6 J"),("S6 S","S6 S"),
-        ("S7 M","S7 M"),("S7 J","S7 J"),("S7 S","S7 S"),
-        ("S8 M","S8 M"),("S8 J","S8 J"),("S8 S","S8 S"),
+        ("", ""),
+        ("S1 M", "S1 M"), ("S1 J", "S1 J"), ("S1 S", "S1 S"),
+        ("S2 M", "S2 M"), ("S2 J", "S2 J"), ("S2 S", "S2 S"),
+        ("S3 M", "S3 M"), ("S3 J", "S3 J"), ("S3 S", "S3 S"),
+        ("S4 M", "S4 M"), ("S4 J", "S4 J"), ("S4 S", "S4 S"),
+        ("S5 M", "S5 M"), ("S5 J", "S5 J"), ("S5 S", "S5 S"),
+        ("S6 M", "S6 M"), ("S6 J", "S6 J"), ("S6 S", "S6 S"),
+        ("S7 M", "S7 M"), ("S7 J", "S7 J"), ("S7 S", "S7 S"),
+        ("S8 M", "S8 M"), ("S8 J", "S8 J"), ("S8 S", "S8 S")
     ]
 }
 
@@ -331,7 +341,7 @@ struct AddTrainingModal: View {
     private var showCustomRectangle: Bool { form.hasClickedCalendar }
 
     private var shouldShowSecondLine: Bool {
-        ["Tapis","Elliptique","Rameur","Home trainer","Triathlon"].contains(form.sportText)
+        ["Tapis", "Elliptique", "Rameur", "Home trainer", "Triathlon"].contains(form.sportText)
     }
 
     private var formattedDateText: String {
@@ -388,19 +398,56 @@ struct AddTrainingModal: View {
             }
         }
         .onAppear { handleAppear() }
-        .onChange(of: form.selectedDate) { _ in handleDateChange() }
-        .onChange(of: form.aJeun)              { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(1) }
-        .onChange(of: form.selectedForme)      { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(2) }
-        .onChange(of: form.kmText)             { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(3) }
-        .onChange(of: form.selectedMinutes)    { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(4) }
-        .onChange(of: form.calculatedMoyenne)  { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(5) }
-        .onChange(of: form.calorieText)        { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(6) }
-        .onChange(of: form.fcMaxText)          { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(7) }
-        .onChange(of: form.fcMoyenneText)      { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(8) }
-        .onChange(of: form.calculatedFCMaxPercent) { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(9) }
-        .onChange(of: form.calculatedFCMoyPercent) { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(10) }
-        .onChange(of: form.selectedPlan)       { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(11) }
-        .onChange(of: form.observationsText)   { _ in guard form.hasClickedCalendar else { return }; form.updateCustomZone(12) }
+        // ── onChange nouvelle syntaxe (macOS 14+) ──────────────────────────
+        .onChange(of: form.selectedDate) { handleDateChange() }
+        .onChange(of: form.aJeun) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(1)
+        }
+        .onChange(of: form.selectedForme) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(2)
+        }
+        .onChange(of: form.kmText) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(3)
+        }
+        .onChange(of: form.selectedMinutes) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(4)
+        }
+        .onChange(of: form.calculatedMoyenne) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(5)
+        }
+        .onChange(of: form.calorieText) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(6)
+        }
+        .onChange(of: form.fcMaxText) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(7)
+        }
+        .onChange(of: form.fcMoyenneText) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(8)
+        }
+        .onChange(of: form.calculatedFCMaxPercent) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(9)
+        }
+        .onChange(of: form.calculatedFCMoyPercent) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(10)
+        }
+        .onChange(of: form.selectedPlan) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(11)
+        }
+        .onChange(of: form.observationsText) {
+            guard form.hasClickedCalendar else { return }
+            form.updateCustomZone(12)
+        }
     }
 
     @ViewBuilder
@@ -446,7 +493,10 @@ extension AddTrainingModal {
 
         var finalTapis: TapisData? = nil
         if form.tapisPicker != nil {
-            finalTapis = TapisData(pente: form.tapisPicker.map { "\($0)" }, force: nil)
+            finalTapis = TapisData(
+                pente: form.tapisPicker.map { "\($0)" },
+                force: nil
+            )
         }
 
         var finalElliptique: ElliptiqueData? = nil
@@ -463,7 +513,7 @@ extension AddTrainingModal {
                 watts: form.rameur.watts.map { "\($0)" },
                 force: form.rameur.force.map { "\($0)" },
                 cM: form.rameur.cm.map { "\($0)" },
-                temps500m: form.rameur.temp500.map { "\($0/60):\(String(format:"%02d",$0%60))" }
+                temps500m: form.rameur.temp500.map { "\($0 / 60):\(String(format: "%02d", $0 % 60))" }
             )
         }
 
@@ -481,12 +531,14 @@ extension AddTrainingModal {
 
         var finalTriathlon: TriathlonData? = nil
         let tri = form.triathlon
-        if tri.rameurKm != nil || tri.homeTrainerKm != nil || tri.tapisKm != nil {
+        if tri.rameurKm != nil || tri.homeTrainerKm != nil || tri.tapisKm != nil || tri.elliptiqueKm != nil {
             finalTriathlon = TriathlonData(
                 rameurKm: tri.rameurKm.map { "\($0)" },
                 rameurTemps: tri.rameurTemps.map { "\($0)" },
                 homeTrainerKm: tri.homeTrainerKm.map { "\($0)" },
                 homeTrainerTemps: tri.homeTrainerTemps.map { "\($0)" },
+                elliptiqueKm: tri.elliptiqueKm.map { "\($0)" },
+                elliptiqueTemps: tri.elliptiqueTemps.map { "\($0)" },
                 tapisKm: tri.tapisKm.map { "\($0)" },
                 tapisTemps: tri.tapisTemps.map { "\($0)" },
                 resultatKm: tri.totalKm > 0 ? "\(tri.totalKm)" : nil,
@@ -614,29 +666,24 @@ extension AddTrainingModal {
     }
 }
 
-// MARK: - CALENDRIER  ← LE FIX EST ICI
+// MARK: - CALENDRIER
 
 extension AddTrainingModal {
     @ViewBuilder
     func customCalendar() -> some View {
-        // ════════════════════════════════════════════════════════
-        // CALENDRIER AVEC TIMEZONE PARIS — FIX DÉFINITIF
-        // ════════════════════════════════════════════════════════
         CalendarGridView(selectedDate: $form.selectedDate)
     }
 }
 
-// Vue séparée pour éviter les problèmes de return dans @ViewBuilder
 private struct CalendarGridView: View {
     @Binding var selectedDate: Date
 
-    // Calcul du calendrier dans une struct séparée = pas de souci de type
     private var calData: (cal: Calendar, today: Date, monthStart: Date, monthDays: Int, emptyDays: Int)? {
         let parisTimeZone = TimeZone(identifier: "Europe/Paris") ?? TimeZone.current
 
         var cal = Calendar(identifier: .gregorian)
-        cal.locale      = Locale(identifier: "fr_FR")
-        cal.timeZone    = parisTimeZone
+        cal.locale       = Locale(identifier: "fr_FR")
+        cal.timeZone     = parisTimeZone
         cal.firstWeekday = 2
 
         var comps    = cal.dateComponents(in: parisTimeZone, from: selectedDate)
@@ -650,7 +697,7 @@ private struct CalendarGridView: View {
         else { return nil }
 
         let firstWeekday = cal.component(.weekday, from: monthStart)
-        let emptyDays    = (firstWeekday + 5) % 7   // Dim=6 Lun=0 Mar=1 ...
+        let emptyDays    = (firstWeekday + 5) % 7
 
         return (cal, Date(), monthStart, range.count, emptyDays)
     }
@@ -737,12 +784,10 @@ private struct CalendarGridView: View {
                 columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 7),
                 spacing: 4
             ) {
-                // Cases vides avant le 1er du mois
                 ForEach(0..<emptyDays, id: \.self) { _ in
                     Color.clear.frame(height: 28)
                 }
 
-                // Jours du mois
                 ForEach(1...monthDays, id: \.self) { day in
                     if let date = cal.date(byAdding: .day, value: day - 1, to: monthStart) {
                         let isToday    = cal.isDate(date, inSameDayAs: today)
@@ -776,14 +821,13 @@ private struct CalendarGridView: View {
             .padding(.horizontal, DS.Space.sm)
             .padding(.bottom, DS.Space.sm)
         }
-        // Force reconstruction complète quand mois/année change
         .id("\(cal.component(.year, from: selectedDate))-\(cal.component(.month, from: selectedDate))")
     }
 
     private func monthYearString(from date: Date, cal: Calendar) -> String {
         let f = DateFormatter()
-        f.locale   = Locale(identifier: "fr_FR")
-        f.timeZone = cal.timeZone
+        f.locale     = Locale(identifier: "fr_FR")
+        f.timeZone   = cal.timeZone
         f.dateFormat = "MMMM yyyy"
         return f.string(from: date).capitalized
     }
@@ -866,7 +910,6 @@ extension AddTrainingModal {
             }
             .padding(.horizontal, DS.Space.md)
         }
-        
         .frame(height: 90)
         .background(Color.white.opacity(0.25))
         .cornerRadius(DS.Radius.md)
@@ -1129,13 +1172,21 @@ extension AddTrainingModal {
                 triathlonBlock(title: "Home trainer",
                                km: $form.triathlon.homeTrainerKm,
                                temps: $form.triathlon.homeTrainerTemps)
+                triathlonBlock(title: "Elliptique",
+                               km: $form.triathlon.elliptiqueKm,
+                               temps: $form.triathlon.elliptiqueTemps)
                 triathlonBlock(title: "Tapis",
                                km: $form.triathlon.tapisKm,
                                temps: $form.triathlon.tapisTemps)
+
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 4) {
-                        Image(systemName: "flag.checkered").foregroundColor(DS.Color.red).font(.system(size: 12))
-                        Text("Total TRIA").font(.system(size: 13, weight: .bold)).foregroundColor(DS.Color.red)
+                        Image(systemName: "flag.checkered")
+                            .foregroundColor(DS.Color.red)
+                            .font(.system(size: 12))
+                        Text("Total TRIA")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(DS.Color.red)
                     }
                     HStack(spacing: DS.Space.md) {
                         triathlonTotalBadge(label: "Km",
@@ -1200,7 +1251,9 @@ extension AddTrainingModal {
     @ViewBuilder
     private func triathlonBlock(title: String, km: Binding<Int?>, temps: Binding<Int?>) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(title).font(.system(size: 12, weight: .semibold)).foregroundColor(DS.Color.textSub)
+            Text(title)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(DS.Color.textSub)
             HStack(spacing: DS.Space.sm) {
                 triathlonPicker(label: "Km",    selection: km,    options: AddTrainingModal.triathlonKmOptions)
                 triathlonPicker(label: "Temps", selection: temps, options: AddTrainingModal.triathlonTempsOptions)
@@ -1215,7 +1268,9 @@ extension AddTrainingModal {
     @ViewBuilder
     func triathlonPicker(label: String, selection: Binding<Int?>, options: [(String, Int?)]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(label).foregroundColor(DS.Color.textMuted).font(.system(size: 10, weight: .medium))
+            Text(label)
+                .foregroundColor(DS.Color.textMuted)
+                .font(.system(size: 10, weight: .medium))
             Picker(label, selection: selection) {
                 ForEach(options, id: \.1) { option in
                     Text(option.0).tag(option.1)
@@ -1232,7 +1287,9 @@ extension AddTrainingModal {
     @ViewBuilder
     private func triathlonTotalBadge(label: String, value: String?) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(label).font(.system(size: 10, weight: .medium)).foregroundColor(DS.Color.textMuted)
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(DS.Color.textMuted)
             Text(value ?? "—")
                 .font(.system(size: 18, weight: .black, design: .rounded))
                 .foregroundColor(value != nil ? DS.Color.red : DS.Color.textMuted)
@@ -1302,7 +1359,9 @@ extension AddTrainingModal {
                 form.sportText = ""
                 form.hasClickedCalendar = false
             } label: {
-                Image(systemName: "xmark.circle.fill").font(.system(size: 18)).foregroundColor(DS.Color.textSub)
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(DS.Color.textSub)
             }
             .buttonStyle(.plain)
         }
@@ -1312,10 +1371,10 @@ extension AddTrainingModal {
     private func customSettingsPanel() -> some View {
         VStack(spacing: DS.Space.sm) {
             HStack(spacing: DS.Space.lg) {
-                miniSlider(label: "Police",     val: $form.fontSize,       range: 10...24, step: 1) { "\(Int($0))pt" }
+                miniSlider(label: "Police",     val: $form.fontSize,       range: 10...24,   step: 1)   { "\(Int($0))pt" }
                 miniSlider(label: "Graisse",    val: $form.fontWeightRaw,  range: 100...900, step: 100) { _ in form.fontWeightLabel }
-                miniSlider(label: "Espacement", val: $form.spacing,        range: 4...30, step: 2) { "\(Int($0))px" }
-                miniSlider(label: "Marge",      val: $form.leadingPadding, range: 0...50, step: 5) { "\(Int($0))px" }
+                miniSlider(label: "Espacement", val: $form.spacing,        range: 4...30,    step: 2)   { "\(Int($0))px" }
+                miniSlider(label: "Marge",      val: $form.leadingPadding, range: 0...50,    step: 5)   { "\(Int($0))px" }
                 Spacer()
             }
             HStack(spacing: DS.Space.lg) {
@@ -1392,30 +1451,66 @@ extension AddTrainingModal {
     func secondLineZones() -> some View {
         Group {
             if form.sportText == "Tapis" {
-                equipBadge(label: "Pente", value: form.tapisPicker.map { "\($0)%" }, color: DS.Color.orange)
+                equipBadge(label: "Pente",
+                           value: form.tapisPicker.map { "\($0)%" },
+                           color: DS.Color.orange)
             }
             if form.sportText == "Elliptique" {
-                equipBadge(label: "Force",       value: form.elliptique.force.map { "\($0)" },  color: DS.Color.purple)
-                equipBadge(label: "Inclinaison", value: form.elliptique.incline.map { "\($0)" }, color: DS.Color.purple)
+                equipBadge(label: "Force",
+                           value: form.elliptique.force.map { "\($0)" },
+                           color: DS.Color.purple)
+                equipBadge(label: "Inclinaison",
+                           value: form.elliptique.incline.map { "\($0)" },
+                           color: DS.Color.purple)
             }
             if form.sportText == "Rameur" {
-                equipBadge(label: "Watts",     value: form.rameur.watts.map { "\($0)W" },   color: DS.Color.teal)
-                equipBadge(label: "Force",     value: form.rameur.force.map { "\($0)" },     color: DS.Color.teal)
-                equipBadge(label: "C/M",       value: form.rameur.cm.map { "\($0)" },        color: DS.Color.teal)
-                equipBadge(label: "Temp/500m", value: form.rameur.temp500 != nil ? form.rameurTemp500Str : nil, color: DS.Color.teal)
-                equipBadge(label: "Programme", value: form.rameur.programme != nil ? form.rameurProgrammeStr : nil, color: DS.Color.teal)
+                equipBadge(label: "Watts",
+                           value: form.rameur.watts.map { "\($0)W" },
+                           color: DS.Color.teal)
+                equipBadge(label: "Force",
+                           value: form.rameur.force.map { "\($0)" },
+                           color: DS.Color.teal)
+                equipBadge(label: "C/M",
+                           value: form.rameur.cm.map { "\($0)" },
+                           color: DS.Color.teal)
+                equipBadge(label: "Temp/500m",
+                           value: form.rameur.temp500 != nil ? form.rameurTemp500Str : nil,
+                           color: DS.Color.teal)
+                equipBadge(label: "Programme",
+                           value: form.rameur.programme != nil ? form.rameurProgrammeStr : nil,
+                           color: DS.Color.teal)
             }
             if form.sportText == "Home trainer" {
-                equipBadge(label: "Puissance", value: form.homeTrainer.puissance.map { "\($0)W" }, color: DS.Color.green)
-                equipBadge(label: "Cadence",   value: form.homeTrainer.cadence.map { "\($0)" },    color: DS.Color.green)
-                equipBadge(label: "Niveau",    value: form.homeTrainer.niveau.map { "\($0)" },     color: DS.Color.green)
-                equipBadge(label: "Pente",     value: form.homeTrainer.pente.map { "\($0)%" },     color: DS.Color.green)
-                equipBadge(label: "Plateau",   value: form.homeTrainer.plateau.map { "\($0)" },    color: DS.Color.green)
+                equipBadge(label: "Puissance",
+                           value: form.homeTrainer.puissance.map { "\($0)W" },
+                           color: DS.Color.green)
+                equipBadge(label: "Cadence",
+                           value: form.homeTrainer.cadence.map { "\($0)" },
+                           color: DS.Color.green)
+                equipBadge(label: "Niveau",
+                           value: form.homeTrainer.niveau.map { "\($0)" },
+                           color: DS.Color.green)
+                equipBadge(label: "Pente",
+                           value: form.homeTrainer.pente.map { "\($0)%" },
+                           color: DS.Color.green)
+                equipBadge(label: "Plateau",
+                           value: form.homeTrainer.plateau.map { "\($0)" },
+                           color: DS.Color.green)
             }
             if form.sportText == "Triathlon" {
                 let t = form.triathlon
-                equipBadge(label: "Km Total",    value: t.totalKm > 0 ? "\(t.totalKm)" : nil,          color: DS.Color.red)
-                equipBadge(label: "Temps Total", value: t.totalTemps > 0 ? "\(t.totalTemps) min" : nil, color: DS.Color.red)
+                equipBadge(label: "Elliptique Km",
+                           value: t.elliptiqueKm.map { "\($0)" },
+                           color: DS.Color.purple)
+                equipBadge(label: "Elliptique Temps",
+                           value: t.elliptiqueTemps.map { "\($0) min" },
+                           color: DS.Color.purple)
+                equipBadge(label: "Km Total",
+                           value: t.totalKm > 0 ? "\(t.totalKm)" : nil,
+                           color: DS.Color.red)
+                equipBadge(label: "Temps Total",
+                           value: t.totalTemps > 0 ? "\(t.totalTemps) min" : nil,
+                           color: DS.Color.red)
             }
         }
     }
@@ -1423,7 +1518,9 @@ extension AddTrainingModal {
     @ViewBuilder
     func equipBadge(label: String, value: String?, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(label).font(.system(size: 9, weight: .medium)).foregroundColor(DS.Color.textMuted)
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundColor(DS.Color.textMuted)
             Text(value ?? "—")
                 .frame(width: 80)
                 .padding(.vertical, 5)
@@ -1486,8 +1583,12 @@ extension AddTrainingModal {
 
             VStack(spacing: 3) {
                 HStack(spacing: DS.Space.xs) {
-                    Image(systemName: "magnifyingglass").font(.system(size: 10)).foregroundColor(DS.Color.textMuted)
-                    Text("Zoom \(Int(modalScale * 100))%").font(.system(size: 11, weight: .medium)).foregroundColor(DS.Color.textSub)
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 10))
+                        .foregroundColor(DS.Color.textMuted)
+                    Text("Zoom \(Int(modalScale * 100))%")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(DS.Color.textSub)
                 }
                 Slider(value: $modalScale, in: 0.6...1.0, step: 0.05)
                     .frame(width: 130)
@@ -1522,7 +1623,9 @@ extension AddTrainingModal {
                         .frame(width: 18, height: 18)
                         .overlay(Circle().stroke(isOn ? color : DS.Color.borderHi, lineWidth: 1.5))
                     if isOn {
-                        Image(systemName: "checkmark").font(.system(size: 9, weight: .black)).foregroundColor(.black)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 9, weight: .black))
+                            .foregroundColor(.black)
                     }
                 }
                 Text(label)
@@ -1559,8 +1662,9 @@ extension AddTrainingModal {
 }
 
 // MARK: - ROUNDED CORNERS HELPER
+// nonisolated pour éviter l'erreur Swift 6 sur OptionSet
 
-struct RectCorner: OptionSet {
+nonisolated struct RectCorner: OptionSet {
     let rawValue: Int
     static let topLeft     = RectCorner(rawValue: 1 << 0)
     static let topRight    = RectCorner(rawValue: 1 << 1)

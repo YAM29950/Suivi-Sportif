@@ -4,39 +4,26 @@ struct TrainingDetailView: View {
     let training: Training
     @Environment(\.dismiss) private var dismiss
     
-    // Récupération des données du profil utilisateur
     @AppStorage("userBirthDay") private var selectedDay: Int = 0
     @AppStorage("userBirthMonth") private var selectedMonth: Int = 0
     @AppStorage("userBirthYear") private var selectedYear: Int = 0
     @AppStorage("userFCRepos") private var fcReposText = ""
     
-    // Calcul de l'âge
     private var calculatedAge: Int {
         guard selectedDay > 0, selectedMonth > 0, selectedYear > 0 else { return 0 }
-        
         let calendar = Calendar.current
-        let now = Date()
-        
         var dateComponents = DateComponents()
         dateComponents.year = selectedYear
         dateComponents.month = selectedMonth
         dateComponents.day = selectedDay
-        
         guard let birthDate = calendar.date(from: dateComponents) else { return 0 }
-        
-        let ageComponents = calendar.dateComponents([.year], from: birthDate, to: now)
-        return ageComponents.year ?? 0
+        return calendar.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
     }
     
-    // Calcul de la FC Max (220 - âge)
-    private var calculatedFCMax: Int {
-        return max(0, 220 - calculatedAge)
-    }
+    private var calculatedFCMax: Int { max(0, 220 - calculatedAge) }
     
-    // Récupération de la FC Repos
     private var fcRepos: Int {
-        let cleaned = fcReposText.trimmingCharacters(in: .whitespaces)
-        return Int(cleaned) ?? 50
+        Int(fcReposText.trimmingCharacters(in: .whitespaces)) ?? 50
     }
     
     var body: some View {
@@ -50,22 +37,11 @@ struct TrainingDetailView: View {
             
             ScrollView {
                 VStack(spacing: 20) {
-                    // En-tête
                     headerSection
-                    
-                    // Informations de base
                     basicInfoSection
-                    
-                    // Plan d'entraînement
                     planSection
-                    
-                    // Fréquence cardiaque
                     heartRateSection
-                    
-                    // Données spécifiques selon le type d'équipement
                     equipmentSpecificSection
-                    
-                    // Observations
                     observationsSection
                 }
                 .padding()
@@ -78,11 +54,8 @@ struct TrainingDetailView: View {
     
     private var headerSection: some View {
         VStack(spacing: 15) {
-            // IMAGE ET TEXTE
-                       HStack(spacing: 20) {
-                           Spacer().frame(width: 4)
-
-                // IMAGE DU SPORT À GAUCHE
+            HStack(spacing: 20) {
+                Spacer().frame(width: 4)
                 Image(getSportImageName())
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -90,25 +63,18 @@ struct TrainingDetailView: View {
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 3)
-                
                 Spacer().frame(width: 30)
-                
-                // TEXTE AU CENTRE/DROITE
                 VStack(spacing: 10) {
                     Text(training.type)
                         .font(.system(size: 36, weight: .bold))
                         .foregroundColor(.white)
-                    
                     Text(training.formattedDate)
                         .font(.system(size: 18))
                         .foregroundColor(.white.opacity(0.9))
                 }
                 .frame(maxWidth: .infinity)
-                
                 Spacer()
             }
-            
-            // BOUTON RETOUR SOUS L'IMAGE
             HStack {
                 Button(action: { dismiss() }) {
                     HStack {
@@ -133,17 +99,15 @@ struct TrainingDetailView: View {
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Informations générales")
-            
             HStack(spacing: 30) {
-                InfoCard(icon: "location.fill", label: "Distance", value: formatted(training.distance, unit: " km"))
-                InfoCard(icon: "clock.fill", label: "Durée", value: training.duration)
-                InfoCard(icon: "speedometer", label: "Vitesse moy.", value: training.averageSpeed ?? "-")
+                InfoCard(icon: "location.fill",  label: "Distance",     value: formatted(training.distance, unit: " km"))
+                InfoCard(icon: "clock.fill",      label: "Durée",        value: training.duration)
+                InfoCard(icon: "speedometer",     label: "Vitesse moy.", value: training.averageSpeed ?? "-")
             }
-            
             HStack(spacing: 30) {
                 InfoCard(icon: "flame.fill", label: "Calories", value: formatted(training.calories))
-                InfoCard(icon: "moon.fill", label: "À jeun", value: training.aJeun ?? "-")
-                InfoCard(icon: "star.fill", label: "Forme", value: training.forme ?? "-")
+                InfoCard(icon: "moon.fill",  label: "À jeun",   value: training.aJeun ?? "-")
+                InfoCard(icon: "star.fill",  label: "Forme",    value: training.forme ?? "-")
             }
         }
         .padding()
@@ -154,7 +118,6 @@ struct TrainingDetailView: View {
     private var planSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Plan d'entraînement")
-            
             if let plan = training.plan, !plan.isEmpty {
                 Text(plan)
                     .font(.system(size: 16))
@@ -178,14 +141,12 @@ struct TrainingDetailView: View {
     private var heartRateSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Fréquence cardiaque")
-            
             HStack(spacing: 30) {
                 InfoCard(icon: "heart.fill", label: "FC Max", value: formatted(training.maxHeartRate, unit: " bpm"))
                 InfoCard(icon: "heart.fill", label: "FC Moy", value: formatted(training.avgHeartRate, unit: " bpm"))
             }
-            
             HStack(spacing: 30) {
-                InfoCard(icon: "percent", label: "% FC Max", value: getHeartRatePercent(csvValue: training.heartRatePercent, heartRate: training.maxHeartRate))
+                InfoCard(icon: "percent", label: "% FC Max", value: getHeartRatePercent(csvValue: training.heartRatePercent,    heartRate: training.maxHeartRate))
                 InfoCard(icon: "percent", label: "% FC Moy", value: getHeartRatePercent(csvValue: training.heartRatePercentAvg, heartRate: training.avgHeartRate))
             }
         }
@@ -196,35 +157,34 @@ struct TrainingDetailView: View {
     
     @ViewBuilder
     private var equipmentSpecificSection: some View {
-        // Afficher les données spécifiques selon le type d'équipement
         if training.type.contains("Tapis"), let data = training.tapisData {
             tapisSection(data)
         }
-        
-        if training.type.contains("Elliptique") || training.type.contains("elliptique"), let data = training.elliptiqueData {
+        if training.type.contains("Elliptique") || training.type.contains("elliptique"),
+           let data = training.elliptiqueData {
             elliptiqueSection(data)
         }
-        
         if training.type.contains("Rameur"), let data = training.rameurData {
             rameurSection(data)
         }
-        
-        if training.type.contains("Home trainer") || training.type.contains("home trainer"), let data = training.homeTrainerData {
+        if training.type.contains("Home trainer") || training.type.contains("home trainer"),
+           let data = training.homeTrainerData {
             homeTrainerSection(data)
         }
-        
-        if training.type.contains("Triathlon") || training.type.contains("triathlon"), let data = training.triathlonData {
+        if training.type.contains("Triathlon") || training.type.contains("triathlon"),
+           let data = training.triathlonData {
             triathlonSection(data)
         }
     }
     
+    // MARK: - Equipment sections
+    
     private func tapisSection(_ data: TapisData) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Données Tapis")
-            
             HStack(spacing: 30) {
                 InfoCard(icon: "arrow.up.right", label: "Pente", value: data.pente ?? "-")
-                InfoCard(icon: "bolt.fill", label: "Force", value: data.force ?? "-")
+                InfoCard(icon: "bolt.fill",      label: "Force", value: data.force ?? "-")
             }
         }
         .padding()
@@ -235,10 +195,9 @@ struct TrainingDetailView: View {
     private func elliptiqueSection(_ data: ElliptiqueData) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Données Elliptique")
-            
             HStack(spacing: 30) {
-                InfoCard(icon: "angle", label: "Inclinaison", value: data.inclinaison ?? "-")
-                InfoCard(icon: "bolt.fill", label: "Watts", value: data.watts ?? "-")
+                InfoCard(icon: "angle",     label: "Inclinaison", value: data.inclinaison ?? "-")
+                InfoCard(icon: "bolt.fill", label: "Watts",       value: data.watts ?? "-")
             }
         }
         .padding()
@@ -249,11 +208,10 @@ struct TrainingDetailView: View {
     private func rameurSection(_ data: RameurData) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Données Rameur")
-            
             HStack(spacing: 30) {
-                InfoCard(icon: "bolt.fill", label: "Force", value: data.force ?? "-")
-                InfoCard(icon: "gauge", label: "C/M", value: data.cM ?? "-")
-                InfoCard(icon: "timer", label: "Temps/500m", value: data.temps500m ?? "-")
+                InfoCard(icon: "bolt.fill", label: "Force",      value: data.force ?? "-")
+                InfoCard(icon: "gauge",     label: "C/M",        value: data.cM ?? "-")
+                InfoCard(icon: "timer",     label: "Temps/500m", value: data.temps500m ?? "-")
             }
         }
         .padding()
@@ -264,18 +222,16 @@ struct TrainingDetailView: View {
     private func homeTrainerSection(_ data: HomeTrainerData) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             sectionTitle("Données Home Trainer")
-            
             VStack(spacing: 15) {
                 HStack(spacing: 30) {
-                    InfoCard(icon: "doc.text", label: "Programme", value: data.programme ?? "-")
+                    InfoCard(icon: "doc.text",  label: "Programme", value: data.programme ?? "-")
                     InfoCard(icon: "bolt.fill", label: "Puissance", value: data.puissance ?? "-")
-                    InfoCard(icon: "metronome", label: "Cadence", value: data.cadence ?? "-")
+                    InfoCard(icon: "metronome", label: "Cadence",   value: data.cadence ?? "-")
                 }
-                
                 HStack(spacing: 30) {
-                    InfoCard(icon: "gauge", label: "Niveau", value: data.niveau ?? "-")
-                    InfoCard(icon: "arrow.up.right", label: "Pente", value: data.pente ?? "-")
-                    InfoCard(icon: "mountain.2", label: "Plateau", value: data.plateau ?? "-")
+                    InfoCard(icon: "gauge",          label: "Niveau",  value: data.niveau ?? "-")
+                    InfoCard(icon: "arrow.up.right", label: "Pente",   value: data.pente ?? "-")
+                    InfoCard(icon: "mountain.2",     label: "Plateau", value: data.plateau ?? "-")
                 }
             }
         }
@@ -289,53 +245,39 @@ struct TrainingDetailView: View {
             sectionTitle("Données Triathlon")
             
             VStack(spacing: 20) {
+
                 // Rameur
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("🚣 Rameur")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                    HStack(spacing: 20) {
-                        InfoCard(icon: "location.fill", label: "Km", value: data.rameurKm ?? "-")
-                        InfoCard(icon: "clock.fill", label: "Temps", value: data.rameurTemps ?? "-")
-                    }
-                }
-                
+                triBlock(emoji: "🚣", title: "Rameur",
+                         km: data.rameurKm, temps: data.rameurTemps)
+
                 Divider().background(Color.white.opacity(0.3))
-                
+
                 // Home Trainer
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("🚴 Home Trainer")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                    HStack(spacing: 20) {
-                        InfoCard(icon: "location.fill", label: "Km", value: data.homeTrainerKm ?? "-")
-                        InfoCard(icon: "clock.fill", label: "Temps", value: data.homeTrainerTemps ?? "-")
-                    }
-                }
-                
+                triBlock(emoji: "🚴", title: "Home Trainer",
+                         km: data.homeTrainerKm, temps: data.homeTrainerTemps)
+
                 Divider().background(Color.white.opacity(0.3))
-                
+
+                // Elliptique ← NOUVEAU
+                triBlock(emoji: "🏋️", title: "Elliptique",
+                         km: data.elliptiqueKm, temps: data.elliptiqueTemps)
+
+                Divider().background(Color.white.opacity(0.3))
+
                 // Tapis
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("🏃 Tapis")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                    HStack(spacing: 20) {
-                        InfoCard(icon: "location.fill", label: "Km", value: data.tapisKm ?? "-")
-                        InfoCard(icon: "clock.fill", label: "Temps", value: data.tapisTemps ?? "-")
-                    }
-                }
-                
+                triBlock(emoji: "🏃", title: "Tapis",
+                         km: data.tapisKm, temps: data.tapisTemps)
+
                 Divider().background(Color.white.opacity(0.3))
-                
+
                 // Résultat Total
                 VStack(alignment: .leading, spacing: 10) {
                     Text("🏆 Résultat Total")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.yellow)
                     HStack(spacing: 20) {
-                        InfoCard(icon: "location.fill", label: "Km", value: data.resultatKm ?? "-")
-                        InfoCard(icon: "clock.fill", label: "Temps", value: data.resultatTemps ?? "-")
+                        InfoCard(icon: "location.fill", label: "Km",    value: data.resultatKm ?? "-")
+                        InfoCard(icon: "clock.fill",    label: "Temps", value: data.resultatTemps ?? "-")
                     }
                 }
             }
@@ -344,11 +286,23 @@ struct TrainingDetailView: View {
         .background(Color.red.opacity(0.15))
         .cornerRadius(16)
     }
+
+    /// Bloc générique Km / Temps pour une discipline du triathlon
+    private func triBlock(emoji: String, title: String, km: String?, temps: String?) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("\(emoji) \(title)")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.white)
+            HStack(spacing: 20) {
+                InfoCard(icon: "location.fill", label: "Km",    value: km    ?? "-")
+                InfoCard(icon: "clock.fill",    label: "Temps", value: temps ?? "-")
+            }
+        }
+    }
     
     private var observationsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle("Observations")
-            
             if training.observations.isEmpty {
                 Text("Aucune observation")
                     .font(.system(size: 14))
@@ -376,52 +330,33 @@ struct TrainingDetailView: View {
     
     private func getSportImageName() -> String {
         let type = training.type.lowercased()
-        
-        // Mapping basé sur votre SportImageSelector
-        if type.contains("marche") { return "Marche" }
-        if type.contains("tapis") { return "Tapis" }
-        if type.contains("elliptique") { return "elliptique" }
-        if type.contains("rameur") { return "Rameur" }
+        if type.contains("marche")       { return "Marche" }
+        if type.contains("tapis")        { return "Tapis" }
+        if type.contains("elliptique")   { return "elliptique" }
+        if type.contains("rameur")       { return "Rameur" }
         if type.contains("home trainer") { return "Home trainer" }
-        if type.contains("triathlon") { return "triathlon" }
-        if type.contains("piste") { return "Piste" }
-        if type.contains("route") { return "Route" }
-        if type.contains("vtt") { return "VTT" }
-        if type.contains("piscine") { return "Piscine" }
-        if type.contains("mer") { return "Mer" }
-        
-        // Par défaut
+        if type.contains("triathlon")    { return "triathlon" }
+        if type.contains("piste")        { return "Piste" }
+        if type.contains("route")        { return "Route" }
+        if type.contains("vtt")          { return "VTT" }
+        if type.contains("piscine")      { return "Piscine" }
+        if type.contains("mer")          { return "Mer" }
         return "Tous3"
     }
     
     private func getHeartRatePercent(csvValue: String?, heartRate: Int?) -> String {
-        // Si on a une valeur dans le CSV, on l'utilise
         if let csvValue = csvValue, !csvValue.isEmpty, csvValue != "-" {
-            let cleanValue = csvValue.replacingOccurrences(of: ",", with: ".")
+            let clean = csvValue
+                .replacingOccurrences(of: ",", with: ".")
                 .replacingOccurrences(of: "%", with: "")
                 .trimmingCharacters(in: .whitespaces)
-            
-            if let number = Double(cleanValue), number > 0 {
-                return String(format: "%.0f%%", number)
-            }
+            if let n = Double(clean), n > 0 { return String(format: "%.0f%%", n) }
         }
-        
-        // Sinon, on calcule avec la formule de Karvonen
-        // % = (FC - FC Repos) / (FC Max théorique - FC Repos) × 100
-        guard let hr = heartRate, hr > 0 else { return "-" }
-        guard calculatedFCMax > 0, fcRepos > 0 else { return "-" }
-        
-        // FCr (Fréquence Cardiaque de Réserve) = FC Max - FC Repos
+        guard let hr = heartRate, hr > 0, calculatedFCMax > 0, fcRepos > 0 else { return "-" }
         let fcReserve = Double(calculatedFCMax - fcRepos)
         guard fcReserve > 0 else { return "-" }
-        
-        // Pourcentage = (FC actuelle - FC Repos) / FCr × 100
         let percent = (Double(hr - fcRepos) / fcReserve) * 100.0
-        
-        // S'assurer que le pourcentage est entre 0 et 100
-        let clampedPercent = max(0, min(100, percent))
-        
-        return String(format: "%.0f%%", clampedPercent)
+        return String(format: "%.0f%%", max(0, min(100, percent)))
     }
     
     private func formatted(_ value: Double?, unit: String = "") -> String {
@@ -443,30 +378,18 @@ struct InfoCard: View {
     let value: String
     
     private var backgroundColor: Color {
-        // Vérifier si c'est une carte de fréquence cardiaque en pourcentage
         guard (label == "% FC Moy" || label == "% FC Max"), value != "-" else {
             return Color.white.opacity(0.15)
         }
-        
-        // Nettoyer la valeur (enlever %, espaces, etc.)
-        let cleanValue = value.replacingOccurrences(of: "%", with: "")
+        let clean = value
+            .replacingOccurrences(of: "%", with: "")
             .replacingOccurrences(of: ",", with: ".")
             .trimmingCharacters(in: .whitespaces)
-        
-        guard let percent = Double(cleanValue) else {
-            return Color.white.opacity(0.15)
-        }
-        
-        // Zones d'intensité basées sur le pourcentage de FC Max
-        if percent < 70 {
-            return Color.green.opacity(0.6)  // Zone de récupération
-        } else if percent >= 70 && percent < 75 {
-            return Color.yellow.opacity(0.6)  // Zone d'endurance légère
-        } else if percent >= 75 && percent < 85 {
-            return Color.orange.opacity(0.6)  // Zone d'endurance modérée
-        } else {
-            return Color.red.opacity(0.6)  // Zone intense
-        }
+        guard let percent = Double(clean) else { return Color.white.opacity(0.15) }
+        if percent < 70      { return Color.green.opacity(0.6) }
+        if percent < 75      { return Color.yellow.opacity(0.6) }
+        if percent < 85      { return Color.orange.opacity(0.6) }
+        return Color.red.opacity(0.6)
     }
     
     var body: some View {
@@ -474,7 +397,6 @@ struct InfoCard: View {
             Text(label)
                 .font(.system(size: 14))
                 .foregroundColor(.white.opacity(0.9))
-            
             Text(value)
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.white)
@@ -520,4 +442,3 @@ struct InfoCard: View {
         ))
     }
 }
-

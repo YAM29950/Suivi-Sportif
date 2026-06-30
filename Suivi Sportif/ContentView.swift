@@ -1,6 +1,6 @@
 import SwiftUI
 import SDWebImageSwiftUI
-
+import UniformTypeIdentifiers
 // Structure pour les zones de texte d'en-tête
 struct HeaderTextZone {
     var text: String
@@ -16,7 +16,8 @@ enum NavigationDestination {
     case trainings
     case statistics
     case trainingPlan
-    case trainingPlanMortone  // ← Plan Post-Op Névrome de Morton
+    case trainingPlanMortone
+    case pdf
 }
 
 struct ContentView: View {
@@ -44,13 +45,11 @@ struct ContentView: View {
     @State private var mainContainerHeight: CGFloat = 350
     @State private var showHeartRateModal = false
     @State private var currentDestination: NavigationDestination = .home
-    
-    // Variables pour l'animation de l'icône
+
     @State private var iconRotation: Double = 0
     @State private var iconScale: CGFloat = 1.0
     @State private var iconOpacity: Double = 1.0
 
-    // Configuration zones
     @State private var scrollingTextWidth: CGFloat = 1340
     @State private var scrollingTextWidthRight: CGFloat = 350
     @State private var scrollingTextHeight: CGFloat = 40
@@ -58,24 +57,24 @@ struct ContentView: View {
     @State private var scrollingTextPaddingTop: CGFloat = 10
     @State private var titlePaddingTop: CGFloat = -30
     @State private var imageSpacings: [CGFloat] = [24, 24, 24, 44, 44, 24, 44, 24, 24, 44, 24, 0]
-    
+
     @State private var imageZones: [ImageZoneConfig] = [
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Tous", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Marche", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Tapis", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "elliptique", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Rameur", textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Tous",         textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Marche",       textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Tapis",        textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "elliptique",   textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Rameur",       textBoxWidth: 70, textBoxHeight: 30),
         ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Home trainer", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "triathlon", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 67, contrast: 1.0, name: "", imageName: "Piste", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Route", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "VTT", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Piscine", textBoxWidth: 70, textBoxHeight: 30),
-        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Mer", textBoxWidth: 70, textBoxHeight: 30)
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "triathlon",    textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 67, contrast: 1.0, name: "", imageName: "Piste",        textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Route",        textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "VTT",          textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Piscine",      textBoxWidth: 70, textBoxHeight: 30),
+        ImageZoneConfig(width: 70, height: 70, contrast: 1.0, name: "", imageName: "Mer",          textBoxWidth: 70, textBoxHeight: 30)
     ]
-    
+
     @State private var additionalZonesValues: [String] = Array(1...33).map { "Valeur \($0)" }
-    
+
     @State private var headerTextSpacings: [CGFloat] = [10, 25, 35, 15, 15, 15, 15, 0]
     @State private var headerLeftPadding: CGFloat = 14
     @State private var rectangle2GlobalPadding: CGFloat = 12
@@ -86,7 +85,7 @@ struct ContentView: View {
     @State private var headerKmTextColor: Color = .red
     @State private var headerKmTextOpacity: CGFloat = 1.0
     @State private var headerKmFontWeight: Font.Weight = .black
-    
+
     @State private var showOrangeRectangle = false
     @State private var showPurpleRectangle = false
     @State private var bottomRectHeight1: CGFloat = 200
@@ -94,8 +93,9 @@ struct ContentView: View {
 
     @State private var todayInfo: DayInfo? = nil
 
-    private let activityTypes = ["Tous", "Marche", "Tapis", "Elliptique", "Rameur", "Home trainer", "Triathlon", "Piste", "Route", "VTT", "Piscine", "Mer"]
-    
+    private let activityTypes = ["Tous", "Marche", "Tapis", "Elliptique", "Rameur",
+                                 "Home trainer", "Triathlon", "Piste", "Route", "VTT", "Piscine", "Mer"]
+
     private let kmFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -104,9 +104,9 @@ struct ContentView: View {
         formatter.locale = Locale(identifier: "fr_FR")
         return formatter
     }()
-    
+
     // MARK: - Image de fond selon le jour
-    
+
     private var backgroundImageName: String {
         let weekday = Calendar.current.component(.weekday, from: Date())
         switch weekday {
@@ -120,61 +120,61 @@ struct ContentView: View {
         default: return "Menu"
         }
     }
-    
+
     // MARK: - Fonctions génériques
-    
+
     private func calculateKmForYear(_ year: Int) -> Double {
         let calendar = Calendar.current
-        let totalKm = allTrainings
+        return allTrainings
             .filter { calendar.component(.year, from: $0.date) == year }
             .compactMap { $0.distance }
             .reduce(0, +)
-        return totalKm
     }
-    
+
     private func formattedKmForYear(_ year: Int) -> String {
         let totalKm = calculateKmForYear(year)
         let formatted = kmFormatter.string(from: NSNumber(value: totalKm)) ?? "0"
         return "\(formatted) Km"
     }
-    
+
     private func yearComparisonColor(_ year: Int) -> Color {
         if year == 2016 { return Color.white.opacity(0.3) }
-        let currentYearKm = calculateKmForYear(year)
+        let currentYearKm  = calculateKmForYear(year)
         let previousYearKm = calculateKmForYear(year - 1)
-        if currentYearKm > previousYearKm { return .green }
+        if currentYearKm > previousYearKm      { return .green }
         else if currentYearKm < previousYearKm { return .red }
-        else { return Color.white.opacity(0.3) }
+        else                                   { return Color.white.opacity(0.3) }
     }
-    
-    private func calculateKm(type: String, year: Int? = nil, month: Int? = nil, useFormatter: Bool = false, currentMonthOnly: Bool = false) -> String {
-        let calendar = Calendar.current
-        let currentYear = calendar.component(.year, from: Date())
+
+    private func calculateKm(type: String, year: Int? = nil, month: Int? = nil,
+                             useFormatter: Bool = false, currentMonthOnly: Bool = false) -> String {
+        let calendar     = Calendar.current
+        let currentYear  = calendar.component(.year,  from: Date())
         let currentMonth = calendar.component(.month, from: Date())
-        
+
         let totalKm = allTrainings
             .filter { training in
                 guard training.type == type else { return false }
-                let trainYear = calendar.component(.year, from: training.date)
+                let trainYear  = calendar.component(.year,  from: training.date)
                 let trainMonth = calendar.component(.month, from: training.date)
                 if currentMonthOnly { return trainYear == currentYear && trainMonth == currentMonth }
                 if let y = year, let m = month { return trainYear == y && trainMonth == m }
-                if let y = year { return trainYear == y }
+                if let y = year  { return trainYear == y }
                 if let m = month { return trainMonth == m && trainYear == currentYear }
                 return trainYear == currentYear
             }
             .compactMap { $0.distance }
             .reduce(0, +)
-        
+
         if useFormatter {
             let formatted = kmFormatter.string(from: NSNumber(value: totalKm)) ?? "0"
             return "\(formatted) Km"
         }
         return totalKm > 0 ? String(format: "%.0f Km", totalKm) : "0 Km"
     }
-    
+
     private func totalAllSportsKm() -> String {
-        let calendar = Calendar.current
+        let calendar    = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
         let totalKm = allTrainings
             .filter { calendar.component(.year, from: $0.date) == currentYear }
@@ -183,87 +183,91 @@ struct ContentView: View {
         let formatted = kmFormatter.string(from: NSNumber(value: totalKm)) ?? "0"
         return "\(formatted) Km"
     }
-    
+
     private func totalPreviousYearSameMonthKm() -> String {
-        let calendar = Calendar.current
+        let calendar     = Calendar.current
         let currentMonth = calendar.component(.month, from: Date())
-        let previousYear = calendar.component(.year, from: Date()) - 1
+        let previousYear = calendar.component(.year,  from: Date()) - 1
         let totalKm = allTrainings
             .filter {
                 let trainMonth = calendar.component(.month, from: $0.date)
-                let trainYear = calendar.component(.year, from: $0.date)
+                let trainYear  = calendar.component(.year,  from: $0.date)
                 return trainMonth == currentMonth && trainYear == previousYear
             }
             .compactMap { $0.distance }
             .reduce(0, +)
         return totalKm > 0 ? String(format: "%.0f Km", totalKm) : "0 Km"
     }
-    
+
     private func currentYearKm(_ type: String) -> String {
         if type == "Tous" { return totalAllSportsKm() }
         return calculateKm(type: type, useFormatter: type == "Home trainer")
     }
-    
+
     private func previousYearSameMonthKm(_ type: String) -> String {
         if type == "Tous" { return totalPreviousYearSameMonthKm() }
-        let year = Calendar.current.component(.year, from: Date()) - 1
+        let year  = Calendar.current.component(.year,  from: Date()) - 1
         let month = Calendar.current.component(.month, from: Date())
         return calculateKm(type: type, year: year, month: month, useFormatter: type == "Home trainer")
     }
-    
+
     private func currentYearSameMonthKm(_ type: String) -> String {
         if type == "Tous" { return currentMonthYearKm }
         return calculateKm(type: type, useFormatter: type == "Home trainer", currentMonthOnly: true)
     }
-    
+
     private func comparisonSymbol(_ type: String) -> String {
-        let previousRaw = previousYearSameMonthKm(type)
-        let currentRaw = currentYearSameMonthKm(type)
-        let previousStr = previousRaw.replacingOccurrences(of: "Km", with: "").replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-        let currentStr = currentRaw.replacingOccurrences(of: "Km", with: "").replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let previousStr = previousYearSameMonthKm(type)
+            .replacingOccurrences(of: "Km", with: "")
+            .replacingOccurrences(of: " ", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let currentStr  = currentYearSameMonthKm(type)
+            .replacingOccurrences(of: "Km", with: "")
+            .replacingOccurrences(of: " ", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         let previous = Double(previousStr) ?? 0
-        let current = Double(currentStr) ?? 0
-        if current < previous { return "👎" }
+        let current  = Double(currentStr)  ?? 0
+        if current < previous      { return "👎" }
         else if current == previous { return "✌️" }
-        else { return "👍" }
+        else                       { return "👍" }
     }
-    
+
     private var sumKmZones2And3: String {
-        let tapisKm = allTrainings.filter { $0.type == "Tapis" }.compactMap { $0.distance }.reduce(0, +)
+        let tapisKm      = allTrainings.filter { $0.type == "Tapis" }.compactMap { $0.distance }.reduce(0, +)
         let elliptiqueKm = allTrainings.filter { $0.type == "Elliptique" }.compactMap { $0.distance }.reduce(0, +)
         return String(format: "%.1f km", tapisKm + elliptiqueKm)
     }
-    
+
     private var currentMonthYearKm: String {
-        let calendar = Calendar.current
+        let calendar     = Calendar.current
         let currentMonth = calendar.component(.month, from: Date())
-        let currentYear = calendar.component(.year, from: Date())
+        let currentYear  = calendar.component(.year,  from: Date())
         let totalKm = allTrainings
             .filter {
                 let trainMonth = calendar.component(.month, from: $0.date)
-                let trainYear = calendar.component(.year, from: $0.date)
+                let trainYear  = calendar.component(.year,  from: $0.date)
                 return trainMonth == currentMonth && trainYear == currentYear
             }
             .compactMap { $0.distance }
             .reduce(0, +)
         return totalKm > 0 ? String(format: "%.0f Km", totalKm) : "0 Km"
     }
-    
+
     private var previousYearSameMonthKm: String {
-        let calendar = Calendar.current
+        let calendar     = Calendar.current
         let currentMonth = calendar.component(.month, from: Date())
-        let previousYear = calendar.component(.year, from: Date()) - 1
+        let previousYear = calendar.component(.year,  from: Date()) - 1
         let totalKm = allTrainings
             .filter {
                 let trainMonth = calendar.component(.month, from: $0.date)
-                let trainYear = calendar.component(.year, from: $0.date)
+                let trainYear  = calendar.component(.year,  from: $0.date)
                 return trainMonth == currentMonth && trainYear == previousYear
             }
             .compactMap { $0.distance }
             .reduce(0, +)
         return totalKm > 0 ? String(format: "%.0f Km", totalKm) : "0 Km"
     }
-    
+
     private var headerTextZones: [HeaderTextZone] {
         let currentMonth = {
             let formatter = DateFormatter()
@@ -273,42 +277,42 @@ struct ContentView: View {
         }()
         let currentYear = Calendar.current.component(.year, from: Date())
         return [
-            HeaderTextZone(text: "Mois de",          width: 180, height: 30, fontSize: 18, contrast: 1.0),
-            HeaderTextZone(text: currentMonth,        width: 120, height: 30, fontSize: 18, contrast: 1.0),
-            HeaderTextZone(text: "\(currentYear)",    width: 120, height: 30, fontSize: 18, contrast: 1.0),
-            HeaderTextZone(text: currentMonthYearKm,  width: 80,  height: 30, fontSize: 18, contrast: 1.0),
-            HeaderTextZone(text: "en",                width: 40,  height: 30, fontSize: 18, contrast: 1.0),
-            HeaderTextZone(text: currentMonth,        width: 200, height: 30, fontSize: 18, contrast: 1.0),
-            HeaderTextZone(text: "\(currentYear - 1)",width: 80,  height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: "Mois de",              width: 180, height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: currentMonth,            width: 120, height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: "\(currentYear)",        width: 120, height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: currentMonthYearKm,      width: 80,  height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: "en",                    width: 40,  height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: currentMonth,            width: 200, height: 30, fontSize: 18, contrast: 1.0),
+            HeaderTextZone(text: "\(currentYear - 1)",    width: 80,  height: 30, fontSize: 18, contrast: 1.0),
             HeaderTextZone(text: previousYearSameMonthKm, width: 100, height: 30, fontSize: 18, contrast: 1.0)
         ]
     }
-    
+
     private var formattedDateText: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "fr_FR")
         formatter.dateFormat = "EEEE d MMMM yyyy"
         return formatter.string(from: Date()).capitalized
     }
-    
+
     private var daysInfoText: String {
         let calendar = Calendar.current
         let now = Date()
-        let dayOfYear = calendar.ordinality(of: .day, in: .year, for: now) ?? 1
+        let dayOfYear       = calendar.ordinality(of: .day, in: .year, for: now) ?? 1
         let totalDaysInYear = calendar.range(of: .day, in: .year, for: now)?.count ?? 365
-        let daysRemaining = totalDaysInYear - dayOfYear
+        let daysRemaining   = totalDaysInYear - dayOfYear
         return "Jour \(dayOfYear) de l'année   •   \(daysRemaining) jours restants"
     }
-    
-    // MARK: - Données pour les lignes
-    
-    private var headerRowValues: [String] { headerTextZones.map { $0.text } }
-    private var previousYearSameMonthValues: [String] { activityTypes.map { previousYearSameMonthKm($0) } }
-    private var currentYearSameMonthValues: [String] { activityTypes.map { currentYearSameMonthKm($0) } }
-    private var symbolsRowValues: [String] { activityTypes.map { comparisonSymbol($0) } }
 
-    // MARK: - Body et Vue Principale
-        
+    // MARK: - Données pour les lignes
+
+    private var headerRowValues:              [String] { headerTextZones.map { $0.text } }
+    private var previousYearSameMonthValues:  [String] { activityTypes.map { previousYearSameMonthKm($0) } }
+    private var currentYearSameMonthValues:   [String] { activityTypes.map { currentYearSameMonthKm($0) } }
+    private var symbolsRowValues:             [String] { activityTypes.map { comparisonSymbol($0) } }
+
+    // MARK: - Body
+
     var body: some View {
         ZStack {
             LinearGradient(
@@ -316,10 +320,10 @@ struct ContentView: View {
                 startPoint: .bottom, endPoint: .top
             )
             .ignoresSafeArea()
-            
+
             HStack(spacing: 10) {
                 sideMenu
-                
+
                 Group {
                     switch currentDestination {
                     case .home:
@@ -332,28 +336,32 @@ struct ContentView: View {
                         TrainingPlanView()
                     case .trainingPlanMortone:
                         TrainingPlanMortoneView()
+                    case .pdf:
+                        PDFExportView(trainings: allTrainings) {
+                            currentDestination = .home
+                    }
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            if showAddModal        { AddTrainingModal(isPresented: $showAddModal) }
-            if showProfileModal    { UserProfileModal(isPresented: $showProfileModal) }
-            if showHeartRateModal  { HeartRateModal(isPresented: $showHeartRateModal) }
-            if showTousModal       { TousModal(isPresented: $showTousModal) }
-            if showMarcheModal     { MarcheModal(isPresented: $showMarcheModal) }
-            if showTapisModal      { TapisModal(isPresented: $showTapisModal) }
-            if showElliptiqueModal { ElliptiqueModal(isPresented: $showElliptiqueModal) }
-            if showRameurModal     { RameurModal(isPresented: $showRameurModal) }
+
+            if showAddModal         { AddTrainingModal(isPresented: $showAddModal) }
+            if showProfileModal     { UserProfileModal(isPresented: $showProfileModal) }
+            if showHeartRateModal   { HeartRateModal(isPresented: $showHeartRateModal) }
+            if showTousModal        { TousModal(isPresented: $showTousModal) }
+            if showMarcheModal      { MarcheModal(isPresented: $showMarcheModal) }
+            if showTapisModal       { TapisModal(isPresented: $showTapisModal) }
+            if showElliptiqueModal  { ElliptiqueModal(isPresented: $showElliptiqueModal) }
+            if showRameurModal      { RameurModal(isPresented: $showRameurModal) }
             if showHomeTrainerModal { HomeTrainerModal(isPresented: $showHomeTrainerModal) }
-            if showTriathlonModal  { TriathlonModal(isPresented: $showTriathlonModal) }
-            if showPisteModal      { PisteModal(isPresented: $showPisteModal) }
-            if showRouteModal      { RouteModal(isPresented: $showRouteModal) }
-            if showVTTModal        { VTTModal(isPresented: $showVTTModal) }
-            if showPiscineModal    { PiscineModal(isPresented: $showPiscineModal) }
-            if showMerModal        { MerModal(isPresented: $showMerModal) }
-            if showNoticeModal     { NoticeModal(isPresented: $showNoticeModal) }
+            if showTriathlonModal   { TriathlonModal(isPresented: $showTriathlonModal) }
+            if showPisteModal       { PisteModal(isPresented: $showPisteModal) }
+            if showRouteModal       { RouteModal(isPresented: $showRouteModal) }
+            if showVTTModal         { VTTModal(isPresented: $showVTTModal) }
+            if showPiscineModal     { PiscineModal(isPresented: $showPiscineModal) }
+            if showMerModal         { MerModal(isPresented: $showMerModal) }
+            if showNoticeModal      { NoticeModal(isPresented: $showNoticeModal) }
         }
         .alert("Êtes-vous sûr de vouloir quitter l'application ?", isPresented: $showQuitAlert) {
             Button("Annuler", role: .cancel) { }
@@ -363,16 +371,16 @@ struct ContentView: View {
         }
         .onAppear {
             allTrainings = TrainingDataManager.shared.loadTrainings()
-            todayInfo = CalendarDataManager.shared.getTodayInfo()
+            todayInfo    = CalendarDataManager.shared.getTodayInfo()
         }
         .onReceive(NotificationCenter.default.publisher(for: .trainingsDidUpdate)) { _ in
             print("🔄 ContentView: Rechargement des données...")
             allTrainings = TrainingDataManager.shared.loadTrainings()
         }
     }
-        
-    // MARK: - Vue principale (Home)
-        
+
+    // MARK: - Vue Home
+
     private var homeView: some View {
         ZStack {
             Image(backgroundImageName)
@@ -392,9 +400,10 @@ struct ContentView: View {
                 }
                 titleView
                 mainDataContainer
-                
+
                 Spacer().frame(height: 20)
 
+                // Bouton panneau orange
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.4)) { showOrangeRectangle.toggle() }
                 }) {
@@ -428,7 +437,7 @@ struct ContentView: View {
                             }.padding()
                         }
                         .frame(height: 90).padding(.horizontal, 20)
-                        
+
                         ZStack {
                             Rectangle().fill(Color.orange.opacity(0.30)).cornerRadius(16)
                             VStack(spacing: 6) {
@@ -453,9 +462,9 @@ struct ContentView: View {
                         .frame(height: 120).padding(.horizontal, 20)
                     }
                     .transition(.move(edge: .trailing))
-                    .padding(.top, 0)
                 }
-                
+
+                // Bouton panneau violet
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.4)) { showPurpleRectangle.toggle() }
                 }) {
@@ -476,14 +485,14 @@ struct ContentView: View {
                     .frame(height: 100).padding(.horizontal, 20)
                     .transition(.move(edge: .trailing))
                 }
-                     
+
                 Spacer()
             }
         }
     }
 
     // MARK: - Sous-vues
-        
+
     private var scrollingTextView: some View {
         ZStack {
             GeometryReader { geo in
@@ -506,7 +515,7 @@ struct ContentView: View {
         .padding(.leading, scrollingTextPaddingLeft)
         .padding(.top, scrollingTextPaddingTop)
     }
-        
+
     private var scrollingTextViewRight: some View {
         ZStack {
             Rectangle().fill(Color.purple.opacity(0.3)).cornerRadius(12)
@@ -529,7 +538,7 @@ struct ContentView: View {
         .padding(.trailing, scrollingTextPaddingLeft)
         .padding(.top, scrollingTextPaddingTop)
     }
-        
+
     private var titleView: some View {
         HStack(spacing: 15) {
             if let gifURL = Bundle.main.url(forResource: "coureur", withExtension: "gif") {
@@ -546,7 +555,7 @@ struct ContentView: View {
         .frame(maxWidth: .infinity)
         .padding(.top, titlePaddingTop)
     }
-        
+
     private var mainDataContainer: some View {
         ZStack {
             Rectangle().fill(Color.white.opacity(0.08)).cornerRadius(16)
@@ -560,7 +569,7 @@ struct ContentView: View {
         .frame(height: mainContainerHeight)
         .padding(.leading, 6).padding(.trailing, 20)
     }
-        
+
     private var imageZonesContainer: some View {
         ZStack(alignment: .topLeading) {
             Rectangle().fill(Color.white.opacity(0)).cornerRadius(12).padding(.top, 20)
@@ -600,22 +609,22 @@ struct ContentView: View {
                             default:             return imageZones[index].height
                             }
                         }()
-                        
+
                         VStack(spacing: 4) {
                             Button(action: {
                                 switch imageZones[index].imageName {
-                                case "Tous":         showTousModal = true
-                                case "Marche":       showMarcheModal = true
-                                case "Tapis":        showTapisModal = true
-                                case "elliptique":   showElliptiqueModal = true
-                                case "Rameur":       showRameurModal = true
+                                case "Tous":         showTousModal        = true
+                                case "Marche":       showMarcheModal      = true
+                                case "Tapis":        showTapisModal       = true
+                                case "elliptique":   showElliptiqueModal  = true
+                                case "Rameur":       showRameurModal      = true
                                 case "Home trainer": showHomeTrainerModal = true
-                                case "triathlon":    showTriathlonModal = true
-                                case "Piste":        showPisteModal = true
-                                case "Route":        showRouteModal = true
-                                case "VTT":          showVTTModal = true
-                                case "Piscine":      showPiscineModal = true
-                                case "Mer":          showMerModal = true
+                                case "triathlon":    showTriathlonModal   = true
+                                case "Piste":        showPisteModal       = true
+                                case "Route":        showRouteModal       = true
+                                case "VTT":          showVTTModal         = true
+                                case "Piscine":      showPiscineModal     = true
+                                case "Mer":          showMerModal         = true
                                 default: break
                                 }
                             }) {
@@ -641,12 +650,14 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
 
-                            Text(imageZones[index].name).font(.system(size: 9, weight: .medium)).foregroundColor(.white)
+                            Text(imageZones[index].name)
+                                .font(.system(size: 9, weight: .medium)).foregroundColor(.white)
                                 .lineLimit(1).frame(width: imageZones[index].width)
 
                             ZStack {
                                 Rectangle().fill(Color.white.opacity(0.2)).cornerRadius(6)
-                                Text(currentYearKm(activityTypes[index])).font(.system(size: 12)).foregroundColor(.white)
+                                Text(currentYearKm(activityTypes[index]))
+                                    .font(.system(size: 12)).foregroundColor(.white)
                                     .multilineTextAlignment(.center).padding(4)
                             }
                             .frame(width: imageZones[index].textBoxWidth, height: imageZones[index].textBoxHeight)
@@ -662,7 +673,7 @@ struct ContentView: View {
         }
         .frame(height: 150)
     }
-        
+
     private func yearBox(_ year: Int?, color: Color) -> some View {
         ZStack {
             Rectangle().fill(color.opacity(0.3)).cornerRadius(6)
@@ -670,13 +681,15 @@ struct ContentView: View {
         }
         .frame(width: 60, height: 35)
     }
-        
-    private func dataRow(values: [String], fontSize: CGFloat = 14, backgroundColor: Color = Color.white.opacity(0.25)) -> some View {
+
+    private func dataRow(values: [String], fontSize: CGFloat = 14,
+                         backgroundColor: Color = Color.white.opacity(0.25)) -> some View {
         HStack(alignment: .top, spacing: 0) {
             ForEach(0..<12, id: \.self) { index in
                 ZStack {
                     Rectangle().fill(backgroundColor).cornerRadius(6)
-                    Text(values[index]).font(.system(size: fontSize, weight: .medium)).foregroundColor(.white)
+                    Text(values[index])
+                        .font(.system(size: fontSize, weight: .medium)).foregroundColor(.white)
                         .multilineTextAlignment(.center).padding(4)
                 }
                 .frame(width: imageZones[index].textBoxWidth, height: 35)
@@ -684,7 +697,7 @@ struct ContentView: View {
             }
         }
     }
-        
+
     private var additionalZonesContainer: some View {
         ZStack {
             Rectangle().fill(Color.white.opacity(0.15)).cornerRadius(12)
@@ -710,7 +723,7 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, headerLeftPadding).padding(.bottom, 10)
-                
+
                 HStack(spacing: 8) {
                     yearBox(Calendar.current.component(.year, from: Date()) - 1, color: .green)
                     dataRow(values: previousYearSameMonthValues)
@@ -728,9 +741,9 @@ struct ContentView: View {
         }
         .frame(height: 195)
     }
-        
+
     // MARK: - Menu latéral
-        
+
     private var sideMenu: some View {
         VStack(spacing: 10) {
             Button(action: { currentDestination = .home }) {
@@ -741,7 +754,7 @@ struct ContentView: View {
                 )
             }
             .buttonStyle(.plain)
-            
+
             Button(action: { currentDestination = .trainings }) {
                 menuButton(
                     title: "Mes Entr.",
@@ -750,12 +763,12 @@ struct ContentView: View {
                 )
             }
             .buttonStyle(.plain)
-            
+
             Button(action: { showAddModal = true }) {
                 menuButton(title: "Ajouter", icon: "plus.circle.fill", bg: Color.green.opacity(0.25))
             }
             .buttonStyle(.plain)
-            
+
             Button(action: { currentDestination = .statistics }) {
                 menuButton(
                     title: "Stats",
@@ -764,7 +777,7 @@ struct ContentView: View {
                 )
             }
             .buttonStyle(.plain)
-            
+
             Button(action: { currentDestination = .trainingPlan }) {
                 menuButton(
                     title: "Plan 8S",
@@ -774,7 +787,6 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
 
-            // ── Bouton Plan Post-Op Morton ─────────────────────────
             Button(action: { currentDestination = .trainingPlanMortone }) {
                 menuButton(
                     title: "Post-Op",
@@ -783,18 +795,26 @@ struct ContentView: View {
                 )
             }
             .buttonStyle(.plain)
-            // ──────────────────────────────────────────────────────
+
+            Button(action: { currentDestination = .pdf }) {
+                menuButton(
+                    title: "PDF",
+                    icon: "doc.richtext.fill",
+                    bg: currentDestination == .pdf ? Color.teal.opacity(0.5) : Color.teal.opacity(0.25)
+                )
+            }
+            .buttonStyle(.plain)
 
             Button(action: { showHeartRateModal = true }) {
                 menuButton(title: "FC", icon: "heart.fill", bg: Color.red.opacity(0.25))
             }
             .buttonStyle(.plain)
-            
+
             Button(action: { showProfileModal = true }) {
                 menuButton(title: "Profil", icon: "person.circle.fill", bg: Color.orange.opacity(0.25))
             }
             .buttonStyle(.plain)
-            
+
             Button(action: { showNoticeModal = true }) {
                 menuButton(title: "Notice", icon: "book.fill", bg: Color.indigo.opacity(0.30))
             }
@@ -812,7 +832,7 @@ struct ContentView: View {
         .padding(.leading, 10)
         .frame(width: 90)
     }
-        
+
     private func menuButton(title: String, icon: String, bg: Color) -> some View {
         VStack(spacing: 8) {
             Image(systemName: icon).font(.system(size: 20))
